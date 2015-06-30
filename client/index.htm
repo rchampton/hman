@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Connect</title>
+        <script src="/js/lodash.js"></script>
+        <script src="/js/machina.min.js"></script>
+        <script src="/js/HmanclientFsm.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var clientFsm
+                , socket
+                , ui={};
+
+            function initui(){
+                ui.closeAllDivs=function(){
+                    var divs=document.getElementsByTagName('div');
+                    for(var i=0, max=divs.length; i<max; i++)
+                        divs[i].style.display='none';
+                };
+
+                ui.refresh=function(){
+                    this.closeAllDivs();
+                    document.getElementById('ui-'+clientFsm.state).style.display='block';
+                }.bind(ui);
+            }
+            
+            document.addEventListener('DOMContentLoaded', function(e){
+                console.log('Ready');
+
+                clientFsm=new HmanclientFsm();
+
+                clientFsm.on('*', function(eventName, data){
+//                    console.log('event [' + eventName + '] with data [' + data + ']');
+                    switch(eventName){
+                        case 'transition':
+                            if(clientFsm.DEBUGTRACE)console.debug('Transition from ' + data.fromState + ' to ' + data.toState);
+                            break;
+                        case 'handling':
+                            break;
+                        case 'handled':
+                            ui.refresh();
+                            break;
+                        default:
+                            if(clientFsm.DEBUGTRACE)console.debug('Fsm event ' + eventName + ' fired');
+                            break;
+                    }
+                });
+
+                initui();
+                clientFsm.handle('start');
+            });
+
+            function connect(){
+                clientFsm.connect();
+            }
+
+            function login(){
+                var pname=document.getElementById('pname').value;
+
+                if(!(/^ *$/g.test(pname)))
+                    clientFsm.login(pname);
+                else
+                    console.log('Please provide a name');
+            }
+
+            function send(){
+                var word=document.getElementById('word').value;
+
+                if(!(/^ *$/g.test(word))){
+                    clientFsm.send(word);
+                }else{
+                    console.log('Please provide a word');
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div id="ui-connecting">
+            <h3>Connect</h3>
+            <button onclick="clientFsm.connect()">Connect</button>
+        </div>
+
+        <div id="ui-matching">
+            <h3>Login</h3>
+            <input id="pname" />
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="ui-setup">
+            <h3>Choose your word</h3>
+            <input id="word"/>
+            <button onclick="send()">Go!</button>
+        </div>
+
+        <div id="ui-syncing">
+            <h3>Waiting to start...</h3>
+        </div>
+
+        <div id="ui-waiting">
+            <h3>Opponent's turn...</h3>
+        </div>
+
+        <div id="ui-playing">
+            <h3>Your turn...</h3>
+        </div>
+
+        <div id="ui-won">
+            <h3>You won!  :)</h3>
+        </div>
+
+        <div id="ui-lost">
+            <h3>You lost.  :(</h3>
+        </div>
+
+        <div id="ui-done">
+            <h3>Done</h3>
+            <a href="window.refresh();">Play again</a>
+        </div>
+    </body>
+</html>

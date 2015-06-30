@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+    <head>
+        <title>The Gallows</title>
+        <script src="lodash.js"></script>
+        <script src="machina.js"></script>
+        <script>
+            var hman, ui={};
+            var HangmanFsm=machina.Fsm.extend({
+                DEBUGTRACE: false
+
+                // Machina interface
+                , initialize: function(){
+                    this._prompt='Fetching word, please wait...';
+                    this._gallow='';
+                }
+                , initialState: "uninitialized"
+                , states:{
+                    uninitialized: {
+                        "*": function(){
+                            var script=document.createElement('script');
+                            script.src='//randomword.setgetgo.com/get.php?callback=hman._wordReady';
+                            document.head.appendChild(script);
+                        }
+                        , ready: function(){
+                            this._wordMask=Array(this._word.length+1).join('-');
+                            this._lettersLeft=this._LETTERS.slice();
+                            this.transition('chooseLetter');
+                        }
+                    }
+                    , chooseLetter: {
+                        _onEnter: function(){
+                            this._gallow=this._STATES[this._stateIndex];
+                            this._prompt=this._wordMask+'<br>Choose a letter';
+                        }
+                        , next: function(letter){
+                            this._letterPlayed=letter;
+                            this.transition('resolveChoice');
+                        }
+                    }
+                    , resolveChoice: {
+                        _onEnter: function(){
+                            this.handle(this._update());
+                        }
+                        , win: function(){this.transition('Won');}
+                        , lose: function(){this.transition('Lost');}
+                        , continue: function(){this.transition('chooseLetter');}
+                    }
+                    , Won: {
+                        _onEnter: function(){
+                            this._prompt='You won! :)<br><br>The word was ' + this._word;
+                            this._gallow='';
+                            this._lettersLeft.length=0;
+                        }
+                    }
+                    , Lost: {
+                        _onEnter: function(){
+                            this._prompt='You lost :(<br><br>The word was ' + this._word;
+                            this._gallow='';
+                            this._lettersLeft.length=0;
+                        }
+                    }
+                }
+
+                // Private members
+                , _LETTERS: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'
+                    , 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+                , _STATES: ['The Gallows', 'Noose', 'Head', 'Body', 'Left arm', 'Right arm', 'Left leg', 'Right leg']
+                , _stateIndex: 0
+                , _gallow: ''
+                , _prompt: ''
+                , _word: ''
+                , _wordMask: ''
+                , _lettersLeft: []
+                , _letterPlayed: ''
+
+                // Private methods
+                , _wordReady: function(data){
+                    hman._word=data.Word.replace('\r\n', '').toLowerCase();
+                    if(hman.DEBUGTRACE)console.log('Using word >' + hman._word + '<');
+                    hman.handle('ready');
+                }
+                , _update: function(){
+                    var nextState=''
+                        , allIndexes=[], index=this._word.indexOf(this._letterPlayed);
+
+                    if(this.DEBUGTRACE)console.debug('Initial indexOf %i', index);
+
+                    // Create match list
+                    while(index>-1){
+                        if(this._wordMask.charAt(index)=='-')
+                            allIndexes.push(index);
+                        index=this._word.indexOf(this._letterPlayed, index+1);
+                    }
+
+                    if(this.DEBUGTRACE)
+                        console.debug('updating after playing letter %s\n\tallIndexes.length %i', this._letterPlayed, allIndexes.length);
+
+                    // Matched at least one _letterPlayed
+                    if(allIndexes.length>0){
+                        for(var i=0, max=allIndexes.length; i<max; i++){
+                            this._wordMask=this._wordMask.substr(0, allIndexes[i])
+                                + this._letterPlayed
+                                + this._wordMask.substr(allIndexes[i]+this._letterPlayed.length);
+                        }
+
+                        if(this._word===this._wordMask)nextState='win';
+                    // No match
+                    }else{
+                        this._stateIndex+=1;
+                        if(this._stateIndex===this._STATES.length)nextState='lose';
+                    }
+
+                    if(!nextState){
+                        var playedLetterIndex=this._lettersLeft.indexOf(this._letterPlayed);
+                        if(playedLetterIndex>-1)this._lettersLeft.splice(playedLetterIndex, 1);
+
+                        nextState='continue';
+                    }
+
+                    return nextState;
+                }
+
+                // Public API
+                , prompt: function(){return this._prompt;}
+                , gallow: function(){return this._gallow;}
+                , letterAvailable: function(letter){return (this._lettersLeft.indexOf(letter)>-1)?true:false;}
+                , lettersLeft: function(){return this._lettersLeft;}
+                , inputMethod: function(){return this._inputMethod;}
+            });
+
+            function documentLoaded(){
+                hman=new HangmanFsm();
+
+                hman.on('*', function(eventName, data){
+                    switch(eventName){
+                        case 'transition':
+                            if(hman.DEBUGTRACE)console.debug('Transition from ' + data.fromState + ' to ' + data.toState);
+                            break;
+                        case 'handling':
+                            break;
+                        case 'handled':
+                            ui.refresh();
+                            break;
+                        default:
+                            if(hman.DEBUGTRACE)console.debug('Fsm event ' + eventName + ' fired');
+                            break;
+                    }
+                });
+
+                initUi();
+
+                hman.handle('initialize');
+            }
+
+            function initUi(){
+                ui.keyDown=false;
+                ui.gallow=document.getElementById('gallow');
+                ui.prompt=document.getElementById('prompt');
+                ui.letters=document.getElementById('letters');
+
+                ui.keydownhandler=function(e){
+                    if(ui.keyDown)return;
+                    ui.keyDown=true;
+
+                    // TODO only accept available letters
+                    var charPlayed=String.fromCharCode(e.keyCode);
+                    if(/^[A-z]$/g.test(charPlayed)){
+                        if(hman.letterAvailable(charPlayed))                                                                    
+                            hman.handle('next', charPlayed);
+                    }else{
+                        console.log('Invalid input ' + charPlayed);
+                    }
+                };//.bind(ui);
+                
+                ui.keyuphandler=function(e){ui.keyDown=false;}
+
+                ui.refresh=function(){
+                    ui.gallow.innerHTML=hman.gallow();
+                    ui.prompt.innerHTML=hman.prompt();
+
+                    ui.letters.innerHTML='';
+                    var availableLetters=hman.lettersLeft();
+                    for(var i=0, max=availableLetters.length; i<max; i++)
+                        ui.letters.innerHTML+=availableLetters[i]+' ';
+                }
+
+                addEventListener('keypress', ui.keydownhandler);
+                addEventListener('keyup', ui.keyuphandler);
+            }
+
+            addEventListener('load', documentLoaded);
+        </script>
+    </head>
+    <body>
+        <div id="gallow"></div>
+        <div id="prompt"></div>
+        <div id="letters"></div>
+    </body>
+</html>

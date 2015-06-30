@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Connect</title>
+        <script src="/js/lodash.js"></script>
+        <script src="/js/machina.js"></script>
+        <script src="/js/ConnectionFsm.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket,connection;
+
+            document.addEventListener('DOMContentLoaded', function(e){
+                console.log('Ready');
+            });
+
+            function connect(){
+                socket=io();
+                connection = new ConnectionFsm(socket);
+            }
+
+            function login(){
+                var pname=document.getElementById('pname').value;
+                if(!(/^ *$/g.test(pname)))
+                    socket.emit('login', pname);
+                else
+                    console.log('Please provide a name');
+            }
+        </script>
+    </head>
+    <body>
+        <h3>P</h3>
+        <input id="pname" />
+        <button onclick="connect()">Connect</button>
+    </body>
+</html>

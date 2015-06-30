@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+    <head>
+        <title></title>
+        <script src="lodash.js"></script>
+        <script src="machina.js"></script>
+        <script>
+            var menu, ui={};
+            var Fsm=machina.Fsm.extend({
+                DEBUGTRACE: false
+
+                // Machina interface
+                , initialize: function(){}
+                , initialState: "uninitialized"
+                , states:{
+                    uninitialized: {
+                        "*": function(){
+                        }
+                    }
+                    , state1: {
+                        _onEnter: function(){}
+                    }
+                    , state2: {
+                        _onEnter: function(){}
+                    }
+                }
+
+                // Private members
+
+                // Private methods
+                
+                // Public API
+                , help: function(){
+                    var transs=[];
+                    for(var p in this.states[this.state]){
+                        if(this.states[this.state].hasOwnProperty(p))
+                            transs.push(p);
+                    }
+                    if(this.DEBUGTRACE&&p.length>0){
+                        console.debug('Available transitions');
+                        console.debug('\t'+transs.join('\n\t'));
+                    }
+                }
+            });
+            
+            function documentLoaded(){
+                fsm=new Fsm();
+
+                menu.on('*', function(eventName, data){
+                    switch(eventName){
+                        case 'transition':
+                            if(fsm.DEBUGTRACE)console.debug('Transition from ' + data.fromState + ' to ' + data.toState);
+                            menu.help();
+                            break;
+                        case 'handling':
+                            break;
+                        case 'handled':
+                            // Typically ui updates happen here
+                            break;
+                        default:
+                            if(menu.DEBUGTRACE)console.debug('Fsm event ' + eventName + ' fired');
+                            break;
+                    }
+                });
+
+                initUi();
+
+                fsm.handle('initialize');
+            }
+            
+            function initUi(){
+                addEventListener('keypress', ui.keyhandler);
+            }
+            
+            addEventListener('load', documentLoaded);
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
