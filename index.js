@@ -49,6 +49,10 @@ io.on('connection', function(socket){
     socket.on('setup', function(word){
         serverFsm.setupPlayer(socket.id, word);
     });
+
+    socket.on('play', function(letter){
+        serverFsm.play(letter);
+    });
 });
 
 http.listen(PORT, function(){

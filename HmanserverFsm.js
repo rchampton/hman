@@ -26,8 +26,21 @@ var HmanserverFsm=machina.Fsm.extend({
         , setup: {
             _onEnter: function(){
                 console.log('setup::_onEnter');
+
             }
             , play: function(){
+                var LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'
+                    , 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+                this._players[0].letters=LETTERS.slice();
+                this._players[1].letters=LETTERS.slice();
+
+                // Set the players' masks
+                this._players[0].mask=Array(this._players[0].word.length+1).join('-');
+                this._players[1].mask=Array(this._players[1].word.length+1).join('-');
+
+                this._players[0].gallowIndex=0;
+                this._players[1].gallowIndex=0;
+
                 this.transition('playing');
             }
         }
@@ -37,8 +50,9 @@ var HmanserverFsm=machina.Fsm.extend({
                     if(this.DEBUGTRACE)console.log('Player %s (connection id %s) playing word %s', this._players[i].name, this._players[i].id, this._players[i].word);
                 }
                 this._playerTurn=Math.floor(Math.random()*997)%2;
-                if(this.DEBUGTRACE)console.log(this._players[this._playerTurn].name + "'s turn...");
-                this._io.emit('update', this._playerTurn);
+                this.play();
+                //                this._io.emit('update', this._playerTurn);
+//                this._io.emit('update', this._gamestate());
             }
             , gameover: function(){
                 this.transition('done');
@@ -50,24 +64,86 @@ var HmanserverFsm=machina.Fsm.extend({
 
     // Private members
     , _io: undefined
-    , _playerTurn: 0
-    , _players: []      // [ {id: '', name: 'Jesse'}, {id: '', name: 'Samuel'} ]
+    , _players: []      // [ {id: '', name: 'Jesse', letters: [...], word: 'sun', mask: '---'}, {id: '', name: 'Samuel'} ]
     , _words: []        // [ 'buffalo', 'watermellon' ]
-    , _letters: []      // [ [a,b,c,...], [b,d,g,...] ]
-    , _masks: []        // [ --ffa--, -a-e--ll-- ]
+    , _playerTurn: 0
+    , _STATES: ['The Gallows', 'Noose', 'Head', 'Body', 'Left arm', 'Right arm', 'Left leg', 'Right leg']
 
     // Private methods
+    , _gamestate: function(){
+        var currPlayer=this._players[this._playerTurn];
+        
+        return {
+            playerTurn: this._playerTurn
+            , letters: currPlayer.letters
+            , mask: currPlayer.mask
+            , gallowIndex: currPlayer.gallowIndex
+        };
+    }
+    , _updateGamestate: function(letterPlayed) {
+        var currPlayer=this._players[this._playerTurn];
+        var index=currPlayer.word.indexOf(letterPlayed), allIndexes=[];
+        var nextState='';
+
+        // Make sure they can play the letter
+        if(currPlayer.letters.indexOf(letterPlayed)){
+            console.log('Error, letter %s not available to play', letterPlayed);
+            // TODO don't further process if this happens
+        }
+        
+        // Create match list
+        while(index>-1){
+            if(currPlayer.mask.charAt(index)=='-')
+                allIndexes.push(index);
+            index=currPlayer.word.indexOf(letterPlayed, index+1);
+        }
+
+        // Matched at least one _letterPlayed
+        if(allIndexes.length>0){
+            for(var i=0, max=allIndexes.length; i<max; i++){
+                currPlayer.mask=currPlayer.mask.substr(0, allIndexes[i])
+                    + letterPlayed
+                    + currPlayer.mask.substr(allIndexes[i]+letterPlayed.length);
+            }
+
+            if(currPlayer.word===currPlayer.mask)nextState='win';
+        // No match
+        }else{
+            currPlayer.gallowIndex+=1;
+            if(currPlayer.gallowIndex===this._STATES.length)nextState='lose';
+        }
+
+        if(!nextState){
+            var playedLetterIndex=currPlayer.letters.indexOf(letterPlayed);
+            if(playedLetterIndex>-1)currPlayer.letters.splice(playedLetterIndex, 1);
+
+            nextState='continue';
+        }
+
+        if(this.DEBUGTRACE)console.log('nextState %s' , nextState);
+    }
 
     // Public API
+    , play: function(letter){
+        if(letter){
+            if(this.DEBUGTRACE)console.log('%s played letter %s, updating gamestate...', this._players[this._playerTurn].name, letter);
+            this._updateGamestate(letter);
+        }
+
+        // Tell clients to update
+        this._playerTurn=(this._playerTurn+1)%2;
+        if(this.DEBUGTRACE)console.log(this._players[this._playerTurn].name + "'s turn...");
+
+        this._io.emit('update', this._gamestate());
+    }
     , reset: function(){
         this._playerTurn=0;
         this._players.length=0;
         this._words.length=0;
-        this._letters.length=0;
-        this._masks.length=0;
         this.transition('matching');
+        // TODO init player
         
-        return 'OK';
+        return 'OK ' + new Date();
     }
     , setupPlayer: function(id, word){
         var player=this.playerById(id);

@@ -14,10 +14,15 @@ var HmanclientFsm=machina.Fsm.extend({
         , syncing: {
             _onEnter: function(){
                 if(this.DEBUGTRACE)console.log('Client syncing...');
-                this._socket.on('update', function(playerTurn){
-                    console.log('Received update message with playerTurn ' + playerTurn);
-                    console.log('this._playerIndex %s, playerTurn %s', this._playerIndex, playerTurn);
-                    if(this._playerIndex==playerTurn) this.handle('play');
+                this._socket.on('update', function(gamestate){
+                    this._gamestate=gamestate;
+                    var playerTurn=gamestate.playerTurn;
+                    if(this.DEBUGTRACE){
+                        console.log('Received update message with gamestate:');
+                        console.dir(gamestate);
+                        console.log('this._playerIndex %s, playerTurn %s', this._playerIndex, playerTurn);
+                    }
+                    if(this._playerIndex==playerTurn)this.handle('play');
                     else this.handle('wait');
                 }.bind(this));
             }
@@ -26,9 +31,13 @@ var HmanclientFsm=machina.Fsm.extend({
         }
         , waiting: {
             _onEnter: function(){}
+            , play: 'playing'
         }
         , playing: {
-            _onEnter: function(){}
+            _onEnter: function(){
+                if(this.DEBUGTRACE)console.log('Updating ui...');
+            }
+            , wait: 'waiting'
         }
         , won: {
             _onEnter: function(){}
@@ -46,7 +55,8 @@ var HmanclientFsm=machina.Fsm.extend({
     , _playerName: undefined
     , _playerIndex: undefined
     , _word: undefined
-    
+    , _gamestate: undefined
+
     , _playerTurn: 0
     , _players: []      // [ Jesse, Samuel ]
     , _words: []        // [ buffalo, watermellon ]
@@ -57,6 +67,10 @@ var HmanclientFsm=machina.Fsm.extend({
     , _logPlayerIndex: function (pIndex){
         this._playerIndex=pIndex;
         if(this.DEBUGTRACE)console.log('Set this._playerIndex ' + this._playerIndex);
+    }
+    , _nextState: function(playerTurn){
+        if(this._playerIndex==playerTurn) this.handle('play');
+        else this.handle('wait');    
     }
 
     // Public API
@@ -74,4 +88,11 @@ var HmanclientFsm=machina.Fsm.extend({
         this._socket.emit('setup', this._word);
         this.handle('sync');
     }
+    , play: function(letter){
+        this._socket.emit('play', letter);
+    }
+    , getGamestate: function(){
+        return this._gamestate;
+    }
+    , isMyTurn: function() { return (this._gamestate&&this._gamestate.playerTurn===this._playerIndex); }
 });

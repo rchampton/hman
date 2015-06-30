@@ -13,14 +13,39 @@
 
             function initui(){
                 ui.closeAllDivs=function(){
-                    var divs=document.getElementsByTagName('div');
-                    for(var i=0, max=divs.length; i<max; i++)
-                        divs[i].style.display='none';
+                    var nodes=document.body.childNodes;//getElementsByTagName('div');
+                    for(var i=0, max=nodes.length; i<max; i++)
+                        if(nodes[i].nodeName=='DIV')
+                            nodes[i].style.display='none';
+                        else 
+                            console.log('nodes['+i+'].nodeName ' + nodes[i].nodeName);
                 };
 
                 ui.refresh=function(){
                     this.closeAllDivs();
                     document.getElementById('ui-'+clientFsm.state).style.display='block';
+                    var inputs=document.getElementById('ui-'+clientFsm.state).getElementsByTagName('input');
+                    if(inputs.length)inputs[0].focus();
+
+                    var gamestate=clientFsm.getGamestate();
+                    var currDiv=document.getElementById('ui-'+clientFsm.state);
+                    var gallow=currDiv.getElementsByClassName('gallow')[0]
+                        , prompt=currDiv.getElementsByClassName('prompt')[0]
+                        , letters=currDiv.getElementsByClassName('letters')[0];
+                    switch(clientFsm.isMyTurn()){
+                        case true:
+                            gallow.innerHTML=gamestate.gallowIndex;
+                            prompt.innerHTML='Choose a letter';
+                            letters.innerHTML=gamestate.letters.join(' ');
+                            break;
+                        case false:
+                            gallow.innerHTML=gamestate.gallowIndex;
+                            prompt.innerHTML='Opponent\'s turn';
+                            letters.innerHTML=gamestate.letters.join(' ');
+                            break;
+                        default:
+                            break;
+                    }
                 }.bind(ui);
             }
             
@@ -72,6 +97,11 @@
                     console.log('Please provide a word');
                 }
             }
+
+            function play(){
+                var letter='a';
+                clientFsm.play('a');
+            }
         </script>
     </head>
     <body>
@@ -98,10 +128,17 @@
 
         <div id="ui-waiting">
             <h3>Opponent's turn...</h3>
+            <div class="gallow"></div>
+            <div class="prompt"></div>
+            <div class="letters"></div>
         </div>
 
         <div id="ui-playing">
             <h3>Your turn...</h3>
+            <button onclick="play()">Play</button>
+            <div class="gallow"></div>
+            <div class="prompt"></div>
+            <div class="letters"></div>
         </div>
 
         <div id="ui-won">
