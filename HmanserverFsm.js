@@ -29,6 +29,10 @@ var HmanserverFsm=machina.Fsm.extend({
 
             }
             , play: function(){
+                // Swap player's words
+                this._players[0].word=this._players[1].played;
+                this._players[1].word=this._players[0].played;
+
                 var LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'
                     , 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
                 this._players[0].letters=LETTERS.slice();
@@ -47,12 +51,10 @@ var HmanserverFsm=machina.Fsm.extend({
         , playing: {
             _onEnter: function(){
                 for(var i=0, max=this._players.length; i<max; i++){
-                    if(this.DEBUGTRACE)console.log('Player %s (connection id %s) playing word %s', this._players[i].name, this._players[i].id, this._players[i].word);
+                    if(this.DEBUGTRACE)console.log('Player %s played word %s, solving word %s', this._players[i].name, this._players[i].played, this._players[i].word);
                 }
                 this._playerTurn=Math.floor(Math.random()*997)%2;
                 this.play();
-                //                this._io.emit('update', this._playerTurn);
-//                this._io.emit('update', this._gamestate());
             }
             , gameover: function(){
                 this.transition('done');
@@ -64,10 +66,11 @@ var HmanserverFsm=machina.Fsm.extend({
 
     // Private members
     , _io: undefined
-    , _players: []      // [ {id: '', name: 'Jesse', letters: [...], word: 'sun', mask: '---'}, {id: '', name: 'Samuel'} ]
+    , _players: []      // [ {id: '', name: 'Jesse', letters: [...], played: 'sun', word: 'oxen', mask: '---'}, {id: '', name: 'Samuel'} ]
     , _words: []        // [ 'buffalo', 'watermellon' ]
     , _playerTurn: 0
     , _STATES: ['The Gallows', 'Noose', 'Head', 'Body', 'Left arm', 'Right arm', 'Left leg', 'Right leg']
+    , _winner: -1
 
     // Private methods
     , _gamestate: function(){
@@ -75,9 +78,12 @@ var HmanserverFsm=machina.Fsm.extend({
         
         return {
             playerTurn: this._playerTurn
+            , playerName: currPlayer.name
             , letters: currPlayer.letters
             , mask: currPlayer.mask
             , gallowIndex: currPlayer.gallowIndex
+            , gallow: this._STATES[currPlayer.gallowIndex]
+            , winner: this._winner
         };
     }
     , _updateGamestate: function(letterPlayed) {
@@ -86,7 +92,7 @@ var HmanserverFsm=machina.Fsm.extend({
         var nextState='';
 
         // Make sure they can play the letter
-        if(currPlayer.letters.indexOf(letterPlayed)){
+        if(currPlayer.letters.indexOf(letterPlayed)===-1){
             console.log('Error, letter %s not available to play', letterPlayed);
             // TODO don't further process if this happens
         }
@@ -109,8 +115,13 @@ var HmanserverFsm=machina.Fsm.extend({
             if(currPlayer.word===currPlayer.mask)nextState='win';
         // No match
         }else{
+            if(this.DEBUGTRACE)console.log('Incrementing %s\'s gallowIndex from %i', currPlayer.name, currPlayer.gallowIndex);
             currPlayer.gallowIndex+=1;
-            if(currPlayer.gallowIndex===this._STATES.length)nextState='lose';
+            if(currPlayer.gallowIndex===this._STATES.length){
+                nextState='lose';
+            }else{
+                this._playerTurn=(this._playerTurn+1)%2;
+            }
         }
 
         if(!nextState){
@@ -121,20 +132,29 @@ var HmanserverFsm=machina.Fsm.extend({
         }
 
         if(this.DEBUGTRACE)console.log('nextState %s' , nextState);
+        
+        if(nextState==='win'||nextState==='lose'){
+//            this._io.to(currPlayer.id).emit('gameover', this._gamestate());
+            this._winner=(nextState==='win')?this._playerTurn:(this._playerTurn+1)%2;
+            // return 'gameover';
+            return 'update';
+        }
+        
+        return 'update';
     }
 
     // Public API
     , play: function(letter){
+        var nextMessage='update';
         if(letter){
             if(this.DEBUGTRACE)console.log('%s played letter %s, updating gamestate...', this._players[this._playerTurn].name, letter);
-            this._updateGamestate(letter);
+            nextMessage=this._updateGamestate(letter);
         }
 
         // Tell clients to update
-        this._playerTurn=(this._playerTurn+1)%2;
+//        this._playerTurn=(this._playerTurn+1)%2;
         if(this.DEBUGTRACE)console.log(this._players[this._playerTurn].name + "'s turn...");
-
-        this._io.emit('update', this._gamestate());
+        this._io.emit(nextMessage, this._gamestate());
     }
     , reset: function(){
         this._playerTurn=0;
@@ -147,6 +167,7 @@ var HmanserverFsm=machina.Fsm.extend({
     }
     , setupPlayer: function(id, word){
         var player=this.playerById(id);
+        player.played=word;
         player.word=word;
         this._words.push(word);
         if(this.DEBUGTRACE)console.log('%s sent %s', player.name, player.word);
@@ -166,7 +187,6 @@ var HmanserverFsm=machina.Fsm.extend({
         if(this.DEBUGTRACE)console.log('Adding player ' + playerName + ' with id ' + id);
         var newPlayer={id: id, index: this._players.length, name: playerName};
         this._players.push(newPlayer);
-
         if(this._players.length==2)this.handle('matched');
         else if(this.DEBUGTRACE)console.log('Waiting for another player');
 

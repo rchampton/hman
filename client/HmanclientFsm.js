@@ -22,8 +22,23 @@ var HmanclientFsm=machina.Fsm.extend({
                         console.dir(gamestate);
                         console.log('this._playerIndex %s, playerTurn %s', this._playerIndex, playerTurn);
                     }
-                    if(this._playerIndex==playerTurn)this.handle('play');
-                    else this.handle('wait');
+                    if(gamestate.winner>-1){
+console.log('TODO process win/lose messages');
+                        if(gamestate.winner===this._playerIndex)
+                            this.handle('win');
+                        else
+                            this.handle('lose');
+                        
+//                        this.handle((gamestate.winner===this._playerIndex)?'win':'lose');
+                    }else{
+                        if(this._playerIndex==playerTurn)this.handle('play');
+                        else this.handle('wait');
+                    }
+
+                }.bind(this));
+                this._socket.on('gameover', function(winOrLose){
+                    if(this.DEBUGTRACE)console.log('Processing gameover message with value %s', winOrLose);
+                    this.handle(winOrLose);
                 }.bind(this));
             }
             , play: 'playing'
@@ -31,13 +46,19 @@ var HmanclientFsm=machina.Fsm.extend({
         }
         , waiting: {
             _onEnter: function(){}
+            , wait: 'waiting'
             , play: 'playing'
+            , win: 'won'
+            , lose: 'lost'
         }
         , playing: {
             _onEnter: function(){
                 if(this.DEBUGTRACE)console.log('Updating ui...');
             }
+            , play: 'playing'
             , wait: 'waiting'
+            , win: 'won'
+            , lose: 'lost'
         }
         , won: {
             _onEnter: function(){}
