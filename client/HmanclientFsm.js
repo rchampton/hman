@@ -24,22 +24,22 @@ var HmanclientFsm=machina.Fsm.extend({
                     }
                     if(gamestate.winner>-1){
 console.log('TODO process win/lose messages');
-                        if(gamestate.winner===this._playerIndex)
+/*                        if(gamestate.winner===this._playerIndex)
                             this.handle('win');
                         else
-                            this.handle('lose');
+                            this.handle('lose');*/
                         
-//                        this.handle((gamestate.winner===this._playerIndex)?'win':'lose');
+                        this.handle((gamestate.winner===this._playerIndex)?'win':'lose');
                     }else{
                         if(this._playerIndex==playerTurn)this.handle('play');
                         else this.handle('wait');
                     }
 
                 }.bind(this));
-                this._socket.on('gameover', function(winOrLose){
+/*                this._socket.on('gameover', function(winOrLose){
                     if(this.DEBUGTRACE)console.log('Processing gameover message with value %s', winOrLose);
                     this.handle(winOrLose);
-                }.bind(this));
+                }.bind(this));*/
             }
             , play: 'playing'
             , wait: 'waiting'

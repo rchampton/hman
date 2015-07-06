@@ -38,75 +38,80 @@ console.log('ui.refresh firing...');
                     if(inputs.length)inputs[0].focus();
 
                     var gamestate=clientFsm.getGamestate();
+
+                    if(gamestate===undefined)return;
+
                     var currDiv=document.getElementById('ui-'+clientFsm.state);
                     var who=currDiv.getElementsByClassName('who')[0]
                         , gallow=currDiv.getElementsByClassName('gallow')[0]
                         , prompt=currDiv.getElementsByClassName('prompt')[0]
                         , mask=currDiv.getElementsByClassName('mask')[0]
                         , lettersDiv=currDiv.getElementsByClassName('letters')[0];
-                    switch(clientFsm.isMyTurn()){
-                        case true:
-                            who.innerHTML='Your turn '+gamestate.playerName;
-                            gallow.innerHTML=gamestate.gallow;
-                            prompt.innerHTML='Choose a letter';
-                            mask.innerHTML=gamestate.mask;
-                            lettersDiv.innerHTML='';
-                            var a, span, nbsp, br;
+                    if(gamestate.winner&&gamestate.winner===-1){
+                        switch(clientFsm.isMyTurn()){
+                            case true:
+                                who.innerHTML='Your turn '+gamestate.playerName;
+                                gallow.innerHTML=gamestate.gallow;
+                                prompt.innerHTML='Choose a letter';
+                                mask.innerHTML=gamestate.mask;
+                                lettersDiv.innerHTML='';
+                                var a, span, nbsp, br;
 
-                            var LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-                            
-                            for(var i=0, max=LETTERS.length; i<max; i++){
-                                if(gamestate.letters.indexOf(LETTERS[i])===-1){
-                                    // Letter not available
-                                    span=document.createElement('span');
-                                    span.className='letter';
-                                    span.innerHTML=LETTERS[i]+'&nbsp;';
-                                    lettersDiv.appendChild(span);
-                                }else{
-                                    // Letter still available
+                                var LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+
+                                for(var i=0, max=LETTERS.length; i<max; i++){
+                                    if(gamestate.letters.indexOf(LETTERS[i])===-1){
+                                        // Letter not available
+                                        span=document.createElement('span');
+                                        span.className='letter';
+                                        span.innerHTML=LETTERS[i]+'&nbsp;';
+                                        lettersDiv.appendChild(span);
+                                    }else{
+                                        // Letter still available
+                                        nbsp=document.createElement('span');
+                                        nbsp.innerHTML='&nbsp;';
+                                        a=document.createElement('a');
+                                        a.className='letter';
+                                        a.href='javascript:play(\''+LETTERS[i]+'\')';
+                                        a.innerHTML=LETTERS[i];
+                                        lettersDiv.appendChild(a);
+                                        lettersDiv.appendChild(nbsp);
+                                    }
+
+                                    if((i+1)%5==0){
+                                        br=document.createElement('br');
+                                        lettersDiv.appendChild(br);
+                                        br=document.createElement('br');
+                                        lettersDiv.appendChild(br);
+                                    }
+
+                                }
+
+    /*                            for(var i=0, max=gamestate.letters.length; i<max; i++){
                                     nbsp=document.createElement('span');
                                     nbsp.innerHTML='&nbsp;';
                                     a=document.createElement('a');
-                                    a.className='letter';
-                                    a.href='javascript:play(\''+LETTERS[i]+'\')';
-                                    a.innerHTML=LETTERS[i];
+                                    a.href='javascript:play(\''+gamestate.letters[i]+'\')';
+                                    a.innerHTML=gamestate.letters[i];
                                     lettersDiv.appendChild(a);
                                     lettersDiv.appendChild(nbsp);
-                                }
-
-                                if((i+1)%5==0){
-                                    br=document.createElement('br');
-                                    lettersDiv.appendChild(br);
-                                    br=document.createElement('br');
-                                    lettersDiv.appendChild(br);
-                                }
-
-                            }
-                            
-/*                            for(var i=0, max=gamestate.letters.length; i<max; i++){
-                                nbsp=document.createElement('span');
-                                nbsp.innerHTML='&nbsp;';
-                                a=document.createElement('a');
-                                a.href='javascript:play(\''+gamestate.letters[i]+'\')';
-                                a.innerHTML=gamestate.letters[i];
-                                lettersDiv.appendChild(a);
-                                lettersDiv.appendChild(nbsp);
-                                if((i+1)%8==0){
-                                    br=document.createElement('br');
-                                    lettersDiv.appendChild(br);
-                                }
-                            }*/
-                            break;
-                        case false:
-                            who.innerHTML=gamestate.playerName+'\'s turn';
-                            prompt.innerHTML=gamestate.playerName+'\'s turn';
-                            /*gallow.innerHTML=gamestate.gallow;
-                            prompt.innerHTML=gamestate.playerName+'\'s turn';
-                            mask.innerHTML=gamestate.mask;
-                            lettersDiv.innerHTML=gamestate.letters.join(' ');*/
-                            break;
-                        default:
-                            break;
+                                    if((i+1)%8==0){
+                                        br=document.createElement('br');
+                                        lettersDiv.appendChild(br);
+                                    }
+                                }*/
+                                break;
+                            case false:
+                                who.innerHTML=gamestate.playerName+'\'s turn';
+                                prompt.innerHTML=gamestate.playerName+'\'s turn';
+                                /*gallow.innerHTML=gamestate.gallow;
+                                prompt.innerHTML=gamestate.playerName+'\'s turn';
+                                mask.innerHTML=gamestate.mask;
+                                lettersDiv.innerHTML=gamestate.letters.join(' ');*/
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }.bind(ui);
             }
@@ -204,10 +209,12 @@ console.log('ui.refresh firing...');
 
         <div id="ui-won">
             <h3>You won!  :)</h3>
+            <a href="#" onclick="document.location.reload();">Play again</a>
         </div>
 
         <div id="ui-lost">
             <h3>You lost.  :(</h3>
+            <a href="#" onclick="document.location.reload();">Play again</a>
         </div>
 
         <div id="ui-done">

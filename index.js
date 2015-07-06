@@ -37,12 +37,11 @@ io.on('connection', function(socket){
 
     socket.on('disconnect', function(){
         if(DEBUG){
-            // console.log('io::disconnect fired with socket.id ' + socket.id);
             var disconnectedPlayer=serverFsm.playerById(socket.id);
             if(disconnectedPlayer!=undefined)
-                console.log('A player with socket id ' + socket.id + ' disconnected ' + '(player ' + disconnectedPlayer.name + ')' );
+                console.log('Player %s disconnected.', disconnectedPlayer.name);
             else
-                console.log('A user with socket id ' + socket.id + ' disconnected ' );
+                console.log('A user with socket id %s disconnected', socket.id);
         }
     });
 

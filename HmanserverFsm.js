@@ -61,6 +61,9 @@ var HmanserverFsm=machina.Fsm.extend({
             }
         }
         , done: {
+            _onEnter: function(){
+                console.log('Resetting server state: %s', this.reset());
+            }
         }
     }
 
@@ -155,14 +158,16 @@ var HmanserverFsm=machina.Fsm.extend({
 //        this._playerTurn=(this._playerTurn+1)%2;
         if(this.DEBUGTRACE)console.log(this._players[this._playerTurn].name + "'s turn...");
         this._io.emit(nextMessage, this._gamestate());
+        if(this._winner>-1)
+            this.handle('gameover');
     }
     , reset: function(){
         this._playerTurn=0;
+        this._winner=-1;
         this._players.length=0;
         this._words.length=0;
         this.transition('matching');
-        // TODO init player
-        
+
         return 'OK ' + new Date();
     }
     , setupPlayer: function(id, word){

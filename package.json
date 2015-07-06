@@ -1,7 +1,7 @@
 {
   "name": "hman",
   "version": "0.0.2",
-  "description": "a networked hangman app",
+  "description": "network hman",
   "dependencies": {
     "express": "^4.10.2",
     "lodash": "^3.9.3",
