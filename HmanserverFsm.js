@@ -118,7 +118,7 @@ var HmanserverFsm=machina.Fsm.extend({
             if(currPlayer.word===currPlayer.mask)nextState='win';
         // No match
         }else{
-            if(this.DEBUGTRACE)console.log('Incrementing %s\'s gallowIndex from %i', currPlayer.name, currPlayer.gallowIndex);
+            if(this.DEBUGTRACE)console.log('Incrementing %s\'s gallowIndex from %s', currPlayer.name, currPlayer.gallowIndex);
             currPlayer.gallowIndex+=1;
             if(currPlayer.gallowIndex===this._STATES.length){
                 nextState='lose';

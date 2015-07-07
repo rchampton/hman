@@ -1,0 +1,30 @@
+.sprite-a {
+	background: url('./alphasheet.png') no-repeat -36px -190px;
+	width: 54px;
+	height: 76px;
+}
+.sprite-b {
+	background: url('./alphasheet.png') no-repeat -97px -191px;
+	width: 50px;
+	height: 74px;
+}
+.sprite-c {
+	background: url('./alphasheet.png') no-repeat -156px -190px;
+	width: 50px;
+	height: 75px;
+}
+.sprite-d {
+	background: url('./alphasheet.png') no-repeat -215px -192px;
+	width: 51px;
+	height: 73px;
+}
+.sprite-e {
+	background: url('./alphasheet.png') no-repeat -277px -190px;
+	width: 45px;
+	height: 75px;
+}
+.sprite-f {
+	background: url('./alphasheet.png') no-repeat -336px -190px;
+	width: 46px;
+	height: 75px;
+}

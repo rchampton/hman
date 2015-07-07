@@ -1,7 +1,7 @@
 {
-  "name": "hman",
-  "version": "0.0.2",
-  "description": "network hman",
+  "name": "Hanging with Friends",
+  "version": "0.0.3",
+  "description": "A networked hangman game",
   "dependencies": {
     "express": "^4.10.2",
     "lodash": "^3.9.3",

@@ -36,10 +36,6 @@ console.log('TODO process win/lose messages');
                     }
 
                 }.bind(this));
-/*                this._socket.on('gameover', function(winOrLose){
-                    if(this.DEBUGTRACE)console.log('Processing gameover message with value %s', winOrLose);
-                    this.handle(winOrLose);
-                }.bind(this));*/
             }
             , play: 'playing'
             , wait: 'waiting'

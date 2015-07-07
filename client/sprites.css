@@ -1,0 +1,130 @@
+.letter-a {
+	background: url('alphasheet.png') no-repeat -10px -118px;
+	width: 42px;
+	height: 60px;
+}
+.letter-b {
+	background: url('alphasheet.png') no-repeat -57px -119px;
+	width: 40px;
+	height: 58px;
+}
+.letter-c {
+	background: url('alphasheet.png') no-repeat -104px -119px;
+	width: 39px;
+	height: 57px;
+}
+.letter-d {
+	background: url('alphasheet.png') no-repeat -150px -119px;
+	width: 40px;
+	height: 58px;
+}
+.letter-e {
+	background: url('alphasheet.png') no-repeat -198px -118px;
+	width: 36px;
+	height: 59px;
+}
+.letter-f {
+	background: url('alphasheet.png') no-repeat -244px -118px;
+	width: 36px;
+	height: 59px;
+}
+.letter-g {
+	background: url('alphasheet.png') no-repeat -287px -119px;
+	width: 43px;
+	height: 60px;
+}
+.letter-h {
+	background: url('alphasheet.png') no-repeat -333px -120px;
+	width: 43px;
+	height: 57px;
+}
+.letter-i {
+	background: url('alphasheet.png') no-repeat -389px -120px;
+	width: 24px;
+	height: 57px;
+}
+.letter-j {
+	background: url('alphasheet.png') no-repeat -429px -120px;
+	width: 36px;
+	height: 57px;
+}
+.letter-k {
+	background: url('alphasheet.png') no-repeat -472px -119px;
+	width: 42px;
+	height: 59px;
+}
+.letter-l {
+	background: url('alphasheet.png') no-repeat -525px -120px;
+	width: 29px;
+	height: 57px;
+}
+.letter-m {
+	background: url('alphasheet.png') no-repeat -12px -225px;
+	width: 57px;
+	height: 61px;
+}
+.letter-n {
+	background: url('alphasheet.png') no-repeat -74px -226px;
+	width: 44px;
+	height: 60px;
+}
+.letter-o {
+	background: url('alphasheet.png') no-repeat -129px -222px;
+	width: 43px;
+	height: 62px;
+}
+.letter-p {
+	background: url('alphasheet.png') no-repeat -186px -224px;
+	width: 39px;
+	height: 59px;
+}
+.letter-q {
+	background: url('alphasheet.png') no-repeat -239px -222px;
+	width: 43px;
+	height: 66px;
+}
+.letter-r {
+	background: url('alphasheet.png') no-repeat -296px -224px;
+	width: 40px;
+	height: 59px;
+}
+.letter-s {
+	background: url('alphasheet.png') no-repeat -352px -225px;
+	width: 37px;
+	height: 59px;
+}
+.letter-t {
+	background: url('alphasheet.png') no-repeat -409px -225px;
+	width: 33px;
+	height: 58px;
+}
+.letter-u {
+	background: url('alphasheet.png') no-repeat -460px -225px;
+	width: 41px;
+	height: 58px;
+}
+.letter-v {
+	background: url('alphasheet.png') no-repeat -517px -226px;
+	width: 37px;
+	height: 57px;
+}
+.letter-w {
+	background: url('alphasheet.png') no-repeat -18px -327px;
+	width: 54px;
+	height: 61px;
+}
+.letter-x {
+	background: url('alphasheet.png') no-repeat -76px -329px;
+	width: 47px;
+	height: 61px;
+}
+.letter-y {
+	background: url('alphasheet.png') no-repeat -135px -332px;
+	width: 39px;
+	height: 56px;
+}
+.letter-z {
+	background: url('alphasheet.png') no-repeat -186px -332px;
+	width: 45px;
+	height: 57px;
+}

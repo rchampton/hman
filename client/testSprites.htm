@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title>Spritesheet Test</title>
+        <link href="./sprites.css" rel="stylesheet" type="text/css">
+        <!--<link href="./sprites768w.css" rel="stylesheet" type="text/css">-->
+        <script>
+            var alphabet='abcdefghijklmnopqrstuvwxyz';
+            var letters=alphabet.split('');
+            var currLetterIndex=0;
+
+            function ready(){
+                console.log('Ready');
+            }
+            
+            function addLetter(){
+                var divLetters=document.getElementById('letters');
+                var newLetter=document.createElement('div');
+                newLetter.className='letter-'+letters[currLetterIndex];
+                newLetter.style.display='inline-block';
+                newLetter.setAttribute('letter', letters[currLetterIndex]);
+                newLetter.setAttribute("onclick", "javascript:alert(this.getAttribute('letter'))");
+                divLetters.appendChild(newLetter);
+                currLetterIndex+=1;
+            }
+            
+            window.addEventListener('DOMContentLoaded', ready());
+        </script>
+    </head>
+    <body>
+        <h3>Test</h3>
+        <div id="letters">
+        </div>
+        <button accesskey="A" onclick="addLetter()"><u>A</u>dd</button>
+    </body>
+</html>

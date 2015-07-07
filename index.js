@@ -1,5 +1,27 @@
 /*
 TODOs
+    * Bugs
+        1) Ensure no spaces leading or trailing or within word
+
+    * Update GUI
+        5) Get a set of letters, like scrablle whatever, maybe even with points on them
+            work those into the game instead of the keyboard
+        1) Avatars, male & female
+        2) anim for winner
+        3) anim for loser
+        4) Result of choice delay anim
+
+    * Game config
+        1) Word length
+        2) Best out of
+        3) Observe opponent's plays 
+        4) Mirror mode, a la Wheel of Fortune
+
+    * Production version
+        1) Remove all console.* calls
+        2) Use minified libraries (lodash, machina)
+        3) Github
+
     * If player gets a letter right 
         1) It's still their turn
         2) Update other player to let them know their opponent is guessing again
@@ -26,6 +48,10 @@ app.get('/js/:name', function(rq, rs){
 app.get('/reset', function(rq, rs){
     if(DEBUG)console.log('Resetting...');
     rs.send(serverFsm.reset());
+});
+
+app.get('/watch', function(rq, rs){
+    // TODO make a ...vs... page where clients can observe the head-to-head hangman battle
 });
 
 io.on('connection', function(socket){
