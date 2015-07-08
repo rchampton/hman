@@ -95,7 +95,11 @@
                                 }
 
                                 /* Do new letters */
-                                this.drawKeyboard('playkbd', 'playinput', gamestate.letters);
+                                var divPlaykbd=document.getElementById('playkbd');
+                                for(var i=divPlaykbd.children.length; i>0; i--)
+                                    divPlaykbd.children[i-1].remove();
+
+                                this.drawKeyboard('playkbd', 'playinput', gamestate.letters, this.handlePlayClick);
 console.log("document.getElementById('playinput') " + document.getElementById('playinput'));
                                 document.getElementById('playinput').addEventListener('input', function(){alert('yo');});
 
@@ -120,7 +124,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
                     targetElem.value+=letterSelected;
                 };
                 
-                ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters){
+                ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn){
                     var NUMLETTERSPERLINE=6;
                     var letters='abcdefghijklmnopqrstuvwxyz'.split('');
                     var divLetters=document.getElementById(elemId);
@@ -131,9 +135,16 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
                         newLetter.className='letter-'+letters[i];
                         newLetter.style.display='inline-block';
                         newLetter.setAttribute('letter', letters[i]);
+
                         if(availableLetters==undefined || availableLetters.indexOf(letters[i])>-1){
-                            newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
+                            // TODO don't like the way this is done, hacky with the whole fn thing
+                            if(fn !== undefined){
+                                newLetter.onclick=fn;
+                            }else{
+                                newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
+                            }
                         }
+
                         if(availableLetters && availableLetters.indexOf(letters[i])===-1)
                             newLetter.style.opacity=0.5;
 
@@ -147,7 +158,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
                 };
                 
                 ui.handlePlayClick=function(){
-                    play(event.sourceElement.getAttribute('letter'));
+                    play(event.target.getAttribute('letter'));
                 };
                 
             }
@@ -218,7 +229,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
             <h3>Login</h3>
             <input id="pname" />
             <hr>
-            <div id="spritekbd"></div>
+            <div class="spritekbd" id="spritekbd"></div>
             <button onclick="login()">Login</button>
         </div>
 
@@ -226,7 +237,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
             <h3>Choose your word</h3>
             <input id="word"/>
             <hr>
-            <div id="spritekbd2"></div>
+            <div class="spritekbd" id="spritekbd2"></div>
             <button onclick="send()">Go!</button>
         </div>
 
@@ -249,7 +260,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
             <div class="prompt"></div>
             <div class="letters"></div>
             <input id="playinput">
-            <div id="playkbd"></div>
+            <div id="playkbd" class="spritekbd"></div>
         </div>
 
         <div id="ui-won">
