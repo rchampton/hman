@@ -40,6 +40,11 @@ app.get('/', function(rq, rs){
 	rs.sendFile(__dirname+'/client/index.htm');
 });
 
+app.get('/client/:name', function(rq, rs){
+    var jsUri=__dirname+'/client/'+rq.params.name;
+    rs.sendFile(jsUri);
+});
+
 app.get('/js/:name', function(rq, rs){
     var jsUri=__dirname+'/client/'+rq.params.name;
     rs.sendFile(jsUri);

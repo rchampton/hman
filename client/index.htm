@@ -2,12 +2,21 @@
 <html>
     <head>
         <title>Connect</title>
+        <link href="/client/sprites.css" rel="stylesheet" type="text/css">
         <style type="text/css">
             .letter{
                 background-color: #efefef;
                 border: solid 1px black;
                 padding-right: 15px;
                 margin: 15px;
+            }
+            #spritekbd{
+                text-align:center;
+            }
+            div[class^="letter"] {
+                border:solid 1px #efefef;
+                cursor:pointer;
+                margin:6px;
             }
         </style>
         <script src="/js/lodash.js"></script>
@@ -26,12 +35,9 @@
                         if(nodes[i].nodeName=='DIV')
                             nodes[i].style.display='none';
 // TODO no need to iterate over all the #text nodes
-                    /*                        else 
-                            console.log('nodes['+i+'].nodeName ' + nodes[i].nodeName);*/
                 };
 
                 ui.refresh=function(){
-console.log('ui.refresh firing...');
                     this.closeAllDivs();
                     document.getElementById('ui-'+clientFsm.state).style.display='block';
                     var inputs=document.getElementById('ui-'+clientFsm.state).getElementsByTagName('input');
@@ -46,7 +52,8 @@ console.log('ui.refresh firing...');
                         , gallow=currDiv.getElementsByClassName('gallow')[0]
                         , prompt=currDiv.getElementsByClassName('prompt')[0]
                         , mask=currDiv.getElementsByClassName('mask')[0]
-                        , lettersDiv=currDiv.getElementsByClassName('letters')[0];
+                        , lettersDiv=currDiv.getElementsByClassName('letters')[0]
+                        , playkbd=document.getElementById('playkbd');
                     if(gamestate.winner&&gamestate.winner===-1){
                         switch(clientFsm.isMyTurn()){
                             case true:
@@ -87,19 +94,11 @@ console.log('ui.refresh firing...');
 
                                 }
 
-    /*                            for(var i=0, max=gamestate.letters.length; i<max; i++){
-                                    nbsp=document.createElement('span');
-                                    nbsp.innerHTML='&nbsp;';
-                                    a=document.createElement('a');
-                                    a.href='javascript:play(\''+gamestate.letters[i]+'\')';
-                                    a.innerHTML=gamestate.letters[i];
-                                    lettersDiv.appendChild(a);
-                                    lettersDiv.appendChild(nbsp);
-                                    if((i+1)%8==0){
-                                        br=document.createElement('br');
-                                        lettersDiv.appendChild(br);
-                                    }
-                                }*/
+                                /* Do new letters */
+                                this.drawKeyboard('playkbd', 'playinput', gamestate.letters);
+console.log("document.getElementById('playinput') " + document.getElementById('playinput'));
+                                document.getElementById('playinput').addEventListener('input', function(){alert('yo');});
+
                                 break;
                             case false:
                                 who.innerHTML=gamestate.playerName+'\'s turn';
@@ -114,6 +113,43 @@ console.log('ui.refresh firing...');
                         }
                     }
                 }.bind(ui);
+
+                ui.appendLetter=function(targetElemId){
+                    var letterSelected=event.target.getAttribute('letter');
+                    var targetElem=document.getElementById(targetElemId);
+                    targetElem.value+=letterSelected;
+                };
+                
+                ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters){
+                    var NUMLETTERSPERLINE=6;
+                    var letters='abcdefghijklmnopqrstuvwxyz'.split('');
+                    var divLetters=document.getElementById(elemId);
+                    var newLetter, br;
+
+                    for(var i=0, z=letters.length; i<z; i++){
+                        newLetter=document.createElement('div');
+                        newLetter.className='letter-'+letters[i];
+                        newLetter.style.display='inline-block';
+                        newLetter.setAttribute('letter', letters[i]);
+                        if(availableLetters==undefined || availableLetters.indexOf(letters[i])>-1){
+                            newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
+                        }
+                        if(availableLetters && availableLetters.indexOf(letters[i])===-1)
+                            newLetter.style.opacity=0.5;
+
+                        divLetters.appendChild(newLetter);
+                        
+                        if((i+1)%NUMLETTERSPERLINE===0){
+                            br=document.createElement('br');
+                            divLetters.appendChild(br);
+                        }
+                    }
+                };
+                
+                ui.handlePlayClick=function(){
+                    play(event.sourceElement.getAttribute('letter'));
+                };
+                
             }
             
             document.addEventListener('DOMContentLoaded', function(e){
@@ -138,6 +174,9 @@ console.log('ui.refresh firing...');
                 });
 
                 initui();
+                ui.drawKeyboard('spritekbd', 'pname');
+                ui.drawKeyboard('spritekbd2', 'word');
+
                 clientFsm.handle('start');
             });
 
@@ -178,12 +217,16 @@ console.log('ui.refresh firing...');
         <div id="ui-matching">
             <h3>Login</h3>
             <input id="pname" />
+            <hr>
+            <div id="spritekbd"></div>
             <button onclick="login()">Login</button>
         </div>
 
         <div id="ui-setup">
             <h3>Choose your word</h3>
             <input id="word"/>
+            <hr>
+            <div id="spritekbd2"></div>
             <button onclick="send()">Go!</button>
         </div>
 
@@ -205,6 +248,8 @@ console.log('ui.refresh firing...');
             <div class="mask"></div>
             <div class="prompt"></div>
             <div class="letters"></div>
+            <input id="playinput">
+            <div id="playkbd"></div>
         </div>
 
         <div id="ui-won">
