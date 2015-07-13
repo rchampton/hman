@@ -1,0 +1,177 @@
+.letter-a {
+	background: url('spritesheet.png') no-repeat -15px -29px;
+	width: 25px;
+	height: 24px;
+}
+.letter-b {
+	background: url('spritesheet.png') no-repeat -56px -29px;
+	width: 19px;
+	height: 25px;
+}
+.letter-c {
+	background: url('spritesheet.png') no-repeat -91px -28px;
+	width: 19px;
+	height: 25px;
+}
+.letter-d {
+	background: url('spritesheet.png') no-repeat -126px -29px;
+	width: 21px;
+	height: 25px;
+}
+.letter-e {
+	background: url('spritesheet.png') no-repeat -164px -28px;
+	width: 19px;
+	height: 24px;
+}
+.letter-f {
+	background: url('spritesheet.png') no-repeat -199px -29px;
+	width: 18px;
+	height: 24px;
+}
+.letter-g {
+	background: url('spritesheet.png') no-repeat -231px -28px;
+	width: 21px;
+	height: 27px;
+}
+.letter-h {
+	background: url('spritesheet.png') no-repeat -269px -28px;
+	width: 21px;
+	height: 25px;
+}
+.letter-i {
+	background: url('spritesheet.png') no-repeat -308px -29px;
+	width: 6px;
+	height: 23px;
+}
+.letter-j {
+	background: url('spritesheet.png') no-repeat -328px -28px;
+	width: 17px;
+	height: 24px;
+}
+.letter-k {
+	background: url('spritesheet.png') no-repeat -364px -29px;
+	width: 20px;
+	height: 24px;
+}
+.letter-l {
+	background: url('spritesheet.png') no-repeat -400px -29px;
+	width: 18px;
+	height: 23px;
+}
+.letter-m {
+	background: url('spritesheet.png') no-repeat -432px -29px;
+	width: 26px;
+	height: 24px;
+}
+
+.letter-n {
+	background: url('spritesheet.png') no-repeat -17px -85px;
+	width: 22px;
+	height: 24px;
+}
+.letter-o {
+	background: url('spritesheet.png') no-repeat -56px -85px;
+	width: 22px;
+	height: 23px;
+}
+.letter-p {
+	background: url('spritesheet.png') no-repeat -96px -85px;
+	width: 19px;
+	height: 24px;
+}
+.letter-q {
+	background: url('spritesheet.png') no-repeat -130px -84px;
+	width: 23px;
+	height: 29px;
+}
+.letter-r {
+	background: url('spritesheet.png') no-repeat -170px -85px;
+	width: 20px;
+	height: 24px;
+}
+.letter-s {
+	background: url('spritesheet.png') no-repeat -205px -85px;
+	width: 18px;
+	height: 25px;
+}
+.letter-t {
+	background: url('spritesheet.png') no-repeat -237px -86px;
+	width: 25px;
+	height: 22px;
+}
+.letter-u {
+	background: url('spritesheet.png') no-repeat -274px -85px;
+	width: 20px;
+	height: 24px;
+}
+.letter-v {
+	background: url('spritesheet.png') no-repeat -310px -84px;
+	width: 25px;
+	height: 24px;
+}
+.letter-w {
+	background: url('spritesheet.png') no-repeat -347px -85px;
+	width: 29px;
+	height: 25px;
+}
+.letter-x {
+	background: url('spritesheet.png') no-repeat -390px -85px;
+	width: 23px;
+	height: 26px;
+}
+.letter-y {
+	background: url('spritesheet.png') no-repeat -425px -84px;
+	width: 23px;
+	height: 25px;
+}
+.letter-z {
+	background: url('spritesheet.png') no-repeat -460px -85px;
+	width: 23px;
+	height: 24px;
+}
+
+.letter-Qmark {
+	background: url('spritesheet.png') no-repeat -411px -196px;
+	width: 14px;
+	height: 24px;
+}
+.letter-Exclamation {
+	background: url('spritesheet.png') no-repeat -16px -197px;
+	width: 7px;
+	height: 23px;
+}
+.letter-Period {
+	background: url('spritesheet.png') no-repeat -39px -215px;
+	width: 5px;
+	height: 5px;
+}
+.letter-Apostrophe {
+	background: url('spritesheet.png') no-repeat -61px -197px;
+	width: 5px;
+	height: 24px;
+}
+.letter-Comma {
+	background: url('spritesheet.png') no-repeat -81px -214px;
+	width: 8px;
+	height: 10px;
+}
+.letter-Dash {
+	background: url('spritesheet.png') no-repeat -339px -209px;
+	width: 14px;
+	height: 4px;
+}
+.letter-Bksp {
+	background: url('spritesheet.png') no-repeat -17px -258px;
+	width: 31px;
+	height: 18px;
+}
+.letter-Enter {
+	background: url('spritesheet.png') no-repeat -66px -257px;
+	width: 29px;
+	height: 19px;
+}
+.letter-Space {
+	background: url('spritesheet.png') no-repeat -96px -257px;
+	width: 25px;
+	height: 24px;
+}

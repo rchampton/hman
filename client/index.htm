@@ -2,7 +2,10 @@
 <html>
     <head>
         <title>Connect</title>
-        <link href="/client/sprites.css" rel="stylesheet" type="text/css">
+        <!-- NOTE: If you change the href need to change the spriteExistsForLetter function -->
+        <!--<link href="/client/sprites.css" rel="stylesheet" type="text/css">-->
+        <link href="/client/spritesheet.css" rel="stylesheet" type="text/css">
+        <link href="/client/gallows.css" rel="stylesheet" type="text/css">
         <style type="text/css">
             .letter{
                 background-color: #efefef;
@@ -10,10 +13,10 @@
                 padding-right: 15px;
                 margin: 15px;
             }
-            #spritekbd{
+            .spritekbd{
                 text-align:center;
             }
-            div[class^="letter"] {
+            .spritekbd div[class^="letter"] {
                 border:solid 1px #efefef;
                 cursor:pointer;
                 margin:6px;
@@ -22,147 +25,12 @@
         <script src="/js/lodash.js"></script>
         <script src="/js/machina.min.js"></script>
         <script src="/js/HmanclientFsm.js"></script>
+        <script src="/js/HmanclientUi.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
             var clientFsm
-                , socket
-                , ui={};
+                , socket;
 
-            function initui(){
-                ui.closeAllDivs=function(){
-                    var nodes=document.body.childNodes;//getElementsByTagName('div');
-                    for(var i=0, max=nodes.length; i<max; i++)
-                        if(nodes[i].nodeName=='DIV')
-                            nodes[i].style.display='none';
-// TODO no need to iterate over all the #text nodes
-                };
-
-                ui.refresh=function(){
-                    this.closeAllDivs();
-                    document.getElementById('ui-'+clientFsm.state).style.display='block';
-                    var inputs=document.getElementById('ui-'+clientFsm.state).getElementsByTagName('input');
-                    if(inputs.length)inputs[0].focus();
-
-                    var gamestate=clientFsm.getGamestate();
-
-                    if(gamestate===undefined)return;
-
-                    var currDiv=document.getElementById('ui-'+clientFsm.state);
-                    var who=currDiv.getElementsByClassName('who')[0]
-                        , gallow=currDiv.getElementsByClassName('gallow')[0]
-                        , prompt=currDiv.getElementsByClassName('prompt')[0]
-                        , mask=currDiv.getElementsByClassName('mask')[0]
-                        , lettersDiv=currDiv.getElementsByClassName('letters')[0]
-                        , playkbd=document.getElementById('playkbd');
-                    if(gamestate.winner&&gamestate.winner===-1){
-                        switch(clientFsm.isMyTurn()){
-                            case true:
-                                who.innerHTML='Your turn '+gamestate.playerName;
-                                gallow.innerHTML=gamestate.gallow;
-                                prompt.innerHTML='Choose a letter';
-                                mask.innerHTML=gamestate.mask;
-                                lettersDiv.innerHTML='';
-                                var a, span, nbsp, br;
-
-                                var LETTERS=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-
-                                for(var i=0, max=LETTERS.length; i<max; i++){
-                                    if(gamestate.letters.indexOf(LETTERS[i])===-1){
-                                        // Letter not available
-                                        span=document.createElement('span');
-                                        span.className='letter';
-                                        span.innerHTML=LETTERS[i]+'&nbsp;';
-                                        lettersDiv.appendChild(span);
-                                    }else{
-                                        // Letter still available
-                                        nbsp=document.createElement('span');
-                                        nbsp.innerHTML='&nbsp;';
-                                        a=document.createElement('a');
-                                        a.className='letter';
-                                        a.href='javascript:play(\''+LETTERS[i]+'\')';
-                                        a.innerHTML=LETTERS[i];
-                                        lettersDiv.appendChild(a);
-                                        lettersDiv.appendChild(nbsp);
-                                    }
-
-                                    if((i+1)%5==0){
-                                        br=document.createElement('br');
-                                        lettersDiv.appendChild(br);
-                                        br=document.createElement('br');
-                                        lettersDiv.appendChild(br);
-                                    }
-
-                                }
-
-                                /* Do new letters */
-                                var divPlaykbd=document.getElementById('playkbd');
-                                for(var i=divPlaykbd.children.length; i>0; i--)
-                                    divPlaykbd.children[i-1].remove();
-
-                                this.drawKeyboard('playkbd', 'playinput', gamestate.letters, this.handlePlayClick);
-console.log("document.getElementById('playinput') " + document.getElementById('playinput'));
-                                document.getElementById('playinput').addEventListener('input', function(){alert('yo');});
-
-                                break;
-                            case false:
-                                who.innerHTML=gamestate.playerName+'\'s turn';
-                                prompt.innerHTML=gamestate.playerName+'\'s turn';
-                                /*gallow.innerHTML=gamestate.gallow;
-                                prompt.innerHTML=gamestate.playerName+'\'s turn';
-                                mask.innerHTML=gamestate.mask;
-                                lettersDiv.innerHTML=gamestate.letters.join(' ');*/
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }.bind(ui);
-
-                ui.appendLetter=function(targetElemId){
-                    var letterSelected=event.target.getAttribute('letter');
-                    var targetElem=document.getElementById(targetElemId);
-                    targetElem.value+=letterSelected;
-                };
-                
-                ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn){
-                    var NUMLETTERSPERLINE=6;
-                    var letters='abcdefghijklmnopqrstuvwxyz'.split('');
-                    var divLetters=document.getElementById(elemId);
-                    var newLetter, br;
-
-                    for(var i=0, z=letters.length; i<z; i++){
-                        newLetter=document.createElement('div');
-                        newLetter.className='letter-'+letters[i];
-                        newLetter.style.display='inline-block';
-                        newLetter.setAttribute('letter', letters[i]);
-
-                        if(availableLetters==undefined || availableLetters.indexOf(letters[i])>-1){
-                            // TODO don't like the way this is done, hacky with the whole fn thing
-                            if(fn !== undefined){
-                                newLetter.onclick=fn;
-                            }else{
-                                newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
-                            }
-                        }
-
-                        if(availableLetters && availableLetters.indexOf(letters[i])===-1)
-                            newLetter.style.opacity=0.5;
-
-                        divLetters.appendChild(newLetter);
-                        
-                        if((i+1)%NUMLETTERSPERLINE===0){
-                            br=document.createElement('br');
-                            divLetters.appendChild(br);
-                        }
-                    }
-                };
-                
-                ui.handlePlayClick=function(){
-                    play(event.target.getAttribute('letter'));
-                };
-                
-            }
-            
             document.addEventListener('DOMContentLoaded', function(e){
                 console.log('Ready');
 
@@ -184,9 +52,8 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
                     }
                 });
 
-                initui();
-                ui.drawKeyboard('spritekbd', 'pname');
-                ui.drawKeyboard('spritekbd2', 'word');
+                ui.drawKeyboard('spritekbd', 'pname', undefined, undefined, true);
+                ui.drawKeyboard('spritekbd2', 'word', undefined, undefined, true);
 
                 clientFsm.handle('start');
             });
@@ -249,6 +116,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
             <h3 class="who">Opponent's turn...</h3>
             <div class="prompt"></div>
             <div class="gallow"></div>
+            <div id="waitingGallow" class="gallow2"></div>
             <div class="mask"></div>
             <div class="letters"></div>
         </div>
@@ -256,6 +124,7 @@ console.log("document.getElementById('playinput') " + document.getElementById('p
         <div id="ui-playing">
             <h3 class="who">Your turn...</h3>
             <div class="gallow"></div>
+            <div id="playingGallow" class="gallow2"></div>
             <div class="mask"></div>
             <div class="prompt"></div>
             <div class="letters"></div>

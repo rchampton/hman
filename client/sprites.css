@@ -128,3 +128,29 @@
 	width: 45px;
 	height: 57px;
 }
+/* Punctuation */
+.letter-Dash {
+	background: url('alphasheet.png') no-repeat -518px -365px;
+	width: 36px;
+	height: 6px;
+}
+.letter-Qmark {
+	background: url('alphasheet.png') no-repeat -300px -329px;
+	width: 36px;
+	height: 60px;
+}
+.letter-Exclamation {
+	background: url('alphasheet.png') no-repeat -355px -327px;
+	width: 35px;
+	height: 62px;
+}
+.letter-Space {
+	background: url('alphasheet.png') no-repeat -517px -285px;
+	width: 37px;
+	height: 57px;
+}
+.letter-Apostrophe {
+	background: url('alphasheet.png') no-repeat -250px -330px;
+	width: 5px;
+	height: 20px;
+}
