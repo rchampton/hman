@@ -1,30 +1,35 @@
 /*
 TODOs
-    * Bugs
+    * Must-haves
         1) Ensure no spaces leading or trailing or within word
-
-    * Update GUI
-        5) Get a set of letters, like scrablle whatever, maybe even with points on them
-            work those into the game instead of the keyboard
-        1) Avatars, male & female
-        2) anim for winner
-        3) anim for loser
-        4) Result of choice delay anim
-
-    * Game config
-        1) Word length
-        2) Best out of
-        3) Observe opponent's plays 
-        4) Mirror mode, a la Wheel of Fortune
+        2) Instead of using INPUT for user name, use a div
+        3) Backspace and Enter keys aren't implemented for login screen
 
     * Production version
         1) Remove all console.* calls
         2) Use minified libraries (lodash, machina)
         3) Github
 
-    * If player gets a letter right 
-        1) It's still their turn
-        2) Update other player to let them know their opponent is guessing again
+    * Update GUI
+        1) Result of choice delay anim
+            * Add a Wrong! and Right! screen presented for 1 second after each guess
+        2) anim for winner & loser
+        3) Avatars, male & female
+
+    * Game config
+        1) Word length
+        2) Best out of
+        3) Observe opponent's plays 
+        4) Mirror mode, a la Wheel of Fortune
+        5) Race mode, first to finish w/o busting wins
+
+    * Done
+        5) Get a set of letters, like scrablle whatever, maybe even with points on them
+            work those into the game instead of the keyboard
+
+        * If player gets a letter right 
+            1) It's still their turn
+            2) Update other player to let them know their opponent is guessing again
 */
 
 var DEBUG=true

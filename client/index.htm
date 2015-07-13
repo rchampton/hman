@@ -21,6 +21,13 @@
                 cursor:pointer;
                 margin:6px;
             }
+            .mask {
+                text-align: center;
+            }
+            .boxed {
+                border: solid 1px black;
+                margin: 13px;
+            }
         </style>
         <script src="/js/lodash.js"></script>
         <script src="/js/machina.min.js"></script>
@@ -112,23 +119,25 @@
             <h3>Waiting to start...</h3>
         </div>
 
-        <div id="ui-waiting">
+        <div id="ui-waiting" style="text-align:center;">
             <h3 class="who">Opponent's turn...</h3>
             <div class="prompt"></div>
             <div class="gallow"></div>
-            <div id="waitingGallow" class="gallow2"></div>
-            <div class="mask"></div>
+            <div xxxstyle="text-align:center;">
+                <div id="waitingGallow" class="gallow2" style="display:inline-block;"></div>
+            </div>
+            <div class="mask boxed"></div>
             <div class="letters"></div>
         </div>
 
-        <div id="ui-playing">
+        <div id="ui-playing" style="text-align:center;">
             <h3 class="who">Your turn...</h3>
             <div class="gallow"></div>
-            <div id="playingGallow" class="gallow2"></div>
-            <div class="mask"></div>
+            <div id="playingGallow" class="gallow2" style="display:inline-block;"></div>
+            <div class="mask boxed"></div>
             <div class="prompt"></div>
             <div class="letters"></div>
-            <input id="playinput">
+            <input id="playinput" type="hidden">
             <div id="playkbd" class="spritekbd"></div>
         </div>
 

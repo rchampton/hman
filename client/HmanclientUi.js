@@ -20,9 +20,9 @@ ui.refresh=function(){
 
     var currDiv=document.getElementById('ui-'+clientFsm.state);
     var who=currDiv.getElementsByClassName('who')[0]
-        , gallow=currDiv.getElementsByClassName('gallow')[0]
+//        , gallow=currDiv.getElementsByClassName('gallow')[0]
         , gallow2=document.getElementById(((clientFsm.isMyTurn())?'playingGallow':'waitingGallow'))
-        , prompt=currDiv.getElementsByClassName('prompt')[0]
+//        , prompt=currDiv.getElementsByClassName('prompt')[0]
         , mask=currDiv.getElementsByClassName('mask')[0]
         , lettersDiv=currDiv.getElementsByClassName('letters')[0]
         , playkbd=document.getElementById('playkbd');
@@ -30,10 +30,10 @@ ui.refresh=function(){
         switch(clientFsm.isMyTurn()){
             case true:
                 this.writeString(who, 'Your turn!');
-                this.renderGallow(gallow, gamestate.gallow);
+//                this.renderGallow(gallow, gamestate.gallow);
 //                gallow2=document.getElementById('playingGallow');
                 gallow2.className='gallows-'+gamestate.gallowIndex;
-                prompt.innerHTML='Choose a letter';
+//                prompt.innerHTML='Choose a letter';
                 //mask.innerHTML=gamestate.mask;
                 this.writeString(mask, gamestate.mask);
                 lettersDiv.innerHTML='';
@@ -45,7 +45,7 @@ ui.refresh=function(){
                 break;
             case false:
                 this.writeString(who, gamestate.playerName+'\'s turn');
-                this.renderGallow(gallow, gamestate.gallow);
+//                this.renderGallow(gallow, gamestate.gallow);
                 //mask.innerHTML=gamestate.mask;
 //                gallow2=document.getElementById('waitingGallow');
                 gallow2.className='gallows-'+gamestate.gallowIndex;

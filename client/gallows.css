@@ -1,16 +1,16 @@
 .gallows-0 {
 	background: url('gallows.png') no-repeat -10px -7px;
-	width: 82px;
+	width: 82px; 
 	height: 108px;
 }
 .gallows-1 {
 	background: url('gallows.png') no-repeat -133px -9px;
-	width: 82px;
+	width: 82px; 
 	height: 108px;
 }
 .gallows-2 {
 	background: url('gallows.png') no-repeat -251px -10px;
-	width: 82px;
+	width: 82px; 
 	height: 108px;
 }
 .gallows-3 {
