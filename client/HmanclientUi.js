@@ -20,9 +20,7 @@ ui.refresh=function(){
 
     var currDiv=document.getElementById('ui-'+clientFsm.state);
     var who=currDiv.getElementsByClassName('who')[0]
-//        , gallow=currDiv.getElementsByClassName('gallow')[0]
-        , gallow2=document.getElementById(((clientFsm.isMyTurn())?'playingGallow':'waitingGallow'))
-//        , prompt=currDiv.getElementsByClassName('prompt')[0]
+        , gallow=document.getElementById(((clientFsm.isMyTurn())?'playingGallow':'waitingGallow'))
         , mask=currDiv.getElementsByClassName('mask')[0]
         , lettersDiv=currDiv.getElementsByClassName('letters')[0]
         , playkbd=document.getElementById('playkbd');
@@ -30,11 +28,7 @@ ui.refresh=function(){
         switch(clientFsm.isMyTurn()){
             case true:
                 this.writeString(who, 'Your turn!');
-//                this.renderGallow(gallow, gamestate.gallow);
-//                gallow2=document.getElementById('playingGallow');
-                gallow2.className='gallows-'+gamestate.gallowIndex;
-//                prompt.innerHTML='Choose a letter';
-                //mask.innerHTML=gamestate.mask;
+                gallow.className='gallows-'+gamestate.gallowIndex;
                 this.writeString(mask, gamestate.mask);
                 lettersDiv.innerHTML='';
 
@@ -45,10 +39,7 @@ ui.refresh=function(){
                 break;
             case false:
                 this.writeString(who, gamestate.playerName+'\'s turn');
-//                this.renderGallow(gallow, gamestate.gallow);
-                //mask.innerHTML=gamestate.mask;
-//                gallow2=document.getElementById('waitingGallow');
-                gallow2.className='gallows-'+gamestate.gallowIndex;
+                gallow.className='gallows-'+gamestate.gallowIndex;
                 this.writeString(mask, gamestate.mask);
 // TODO show the other player's state while you wait
                 break;
@@ -59,9 +50,25 @@ ui.refresh=function(){
 }.bind(ui);
 
 ui.appendLetter=function(targetElemId){
+    var divElem=document.getElementById(targetElemId+'div');
     var letterSelected=event.target.getAttribute('letter');
     var targetElem=document.getElementById(targetElemId);
-    targetElem.value+=letterSelected;
+console.log('targetElem %s, letterSelected %s',targetElem,letterSelected);
+    if(letterSelected==='Bksp'){
+console.log('1 targetElem.value %s',targetElem.value);
+        if(targetElem.value.length>0){
+            targetElem.value=targetElem.value.substr(0, targetElem.value.length-1);
+        }
+    }else if(letterSelected==='Enter'){
+        if(targetElemId=='pname')
+            this.handleLoginClick();
+        if(targetElemId=='word')
+            this.handleSendClick();
+    }else{
+        targetElem.value+=letterSelected;
+//        this.appendString(divElem, letterSelected);
+    }
+    this.writeString(divElem, targetElem.value);
 };
 
 ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn, doBkspEnter){
@@ -72,6 +79,15 @@ ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn, doB
     var divLetters=document.getElementById(elemId);
     var newLetter, br;
 
+/*    if(clickToControlElemId=='pname'){
+        var keyNameClick=function(){
+            var letter=event.target.getAttribute('letter');
+            console.log('event.target %s, letter %s', event.target, letter);
+        };
+
+        divLetters.addEventListener('click', keyNameClick)
+    }*/
+    
     for(var i=0, z=letters.length; i<z; i++){
         newLetter=document.createElement('div');
         newLetter.className='letter-'+letters[i];
@@ -102,15 +118,21 @@ ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn, doB
         newLetter.className='letter-Bksp';
         newLetter.style.display='inline-block';
         newLetter.setAttribute('letter', 'Bksp');
+        newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
         divLetters.appendChild(newLetter);
 
         newLetter=document.createElement('div');
         newLetter.className='letter-Enter';
         newLetter.style.display='inline-block';
         newLetter.setAttribute('letter', 'Enter');
+        newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
         divLetters.appendChild(newLetter);
     }
 };
+
+ui.handleSendClick=function(){ send(); }
+
+ui.handleLoginClick=function(){ login(); };
 
 ui.handlePlayClick=function(){
     play(event.target.getAttribute('letter'));

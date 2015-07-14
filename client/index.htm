@@ -63,6 +63,10 @@
                 ui.drawKeyboard('spritekbd2', 'word', undefined, undefined, true);
 
                 clientFsm.handle('start');
+
+                ['pname', 'word'].forEach(function(elemId, index){
+                    document.getElementById(elemId).type='hidden';
+                });
             });
 
             function connect(){
@@ -101,6 +105,7 @@
 
         <div id="ui-matching">
             <h3>Login</h3>
+            <div id="pnamediv"></div>
             <input id="pname" />
             <hr>
             <div class="spritekbd" id="spritekbd"></div>
@@ -109,6 +114,7 @@
 
         <div id="ui-setup">
             <h3>Choose your word</h3>
+            <div id="worddiv"></div>
             <input id="word"/>
             <hr>
             <div class="spritekbd" id="spritekbd2"></div>
@@ -121,9 +127,8 @@
 
         <div id="ui-waiting" style="text-align:center;">
             <h3 class="who">Opponent's turn...</h3>
-            <div class="prompt"></div>
             <div class="gallow"></div>
-            <div xxxstyle="text-align:center;">
+            <div>
                 <div id="waitingGallow" class="gallow2" style="display:inline-block;"></div>
             </div>
             <div class="mask boxed"></div>
@@ -135,7 +140,6 @@
             <div class="gallow"></div>
             <div id="playingGallow" class="gallow2" style="display:inline-block;"></div>
             <div class="mask boxed"></div>
-            <div class="prompt"></div>
             <div class="letters"></div>
             <input id="playinput" type="hidden">
             <div id="playkbd" class="spritekbd"></div>
