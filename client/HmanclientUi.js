@@ -41,7 +41,6 @@ ui.refresh=function(){
                 this.writeString(who, gamestate.playerName+'\'s turn');
                 gallow.className='gallows-'+gamestate.gallowIndex;
                 this.writeString(mask, gamestate.mask);
-// TODO show the other player's state while you wait
                 break;
             default:
                 break;

@@ -60,6 +60,16 @@ console.log('TODO process win/lose messages');
         , done: {
             onEnter: function(){}
         }
+        , wrong: {
+            _onEnter: function(){
+                // Display wrong message, delay, then transfer to waiting
+            }
+        }
+        , right: {
+            _onEnter: function(){
+                // Delay right message, delay, then transfer to playing
+            }
+        }
     }
 
     // Private members
@@ -68,12 +78,11 @@ console.log('TODO process win/lose messages');
     , _playerIndex: undefined
     , _word: undefined
     , _gamestate: undefined
-
     , _playerTurn: 0
-    , _players: []      // [ Jesse, Samuel ]
-    , _words: []        // [ buffalo, watermellon ]
-    , _letters: []      // [ [a,b,c,...], [b,d,g,...] ]
-    , _masks: []        // [ --ffa--, -a-e--ll-- ]
+    , _players: []      
+    , _words: []
+    , _letters: []
+    , _masks: []
 
     // Private methods
     , _logPlayerIndex: function (pIndex){

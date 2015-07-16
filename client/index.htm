@@ -5,8 +5,22 @@
         <!-- NOTE: If you change the href need to change the spriteExistsForLetter function -->
         <!--<link href="/client/sprites.css" rel="stylesheet" type="text/css">-->
         <link href="/client/spritesheet.css" rel="stylesheet" type="text/css">
-        <link href="/client/gallows.css" rel="stylesheet" type="text/css">
+        <link href="/client/gallows-ad.css" rel="stylesheet" type="text/css">
+        <style>
+            @font-face{
+                font-family: 'C64';
+                font-style: normal;
+                font-weight: 400;
+                src: url('/client/C64_Pro-STYLE.woff') format('woff');
+            }
+            .c64{
+                font-family: C64
+            }
+        </style>
         <style type="text/css">
+            .tacenter {
+                text-align: center;
+            }
             .letter{
                 background-color: #efefef;
                 border: solid 1px black;
@@ -98,13 +112,12 @@
         </script>
     </head>
     <body>
-        <div id="ui-connecting">
-            <h3>Connect</h3>
-            <button onclick="clientFsm.connect()">Connect</button>
+        <div class="tacenter" id="ui-connecting">
+            <button class="c64" onclick="clientFsm.connect()">Connect!</button>
         </div>
 
-        <div id="ui-matching">
-            <h3>Login</h3>
+        <div class="tacenter" id="ui-matching">
+            <h3 class="c64">Enter your name</h3>
             <div id="pnamediv"></div>
             <input id="pname" />
             <hr>
@@ -112,8 +125,8 @@
             <button onclick="login()">Login</button>
         </div>
 
-        <div id="ui-setup">
-            <h3>Choose your word</h3>
+        <div class="tacenter" id="ui-setup">
+            <h3 class="c64">Choose your word</h3>
             <div id="worddiv"></div>
             <input id="word"/>
             <hr>
@@ -121,11 +134,11 @@
             <button onclick="send()">Go!</button>
         </div>
 
-        <div id="ui-syncing">
-            <h3>Waiting to start...</h3>
+        <div class="tacenter" id="ui-syncing">
+            <h3 class="c64">Waiting to start...</h3>
         </div>
 
-        <div id="ui-waiting" style="text-align:center;">
+        <div class="tacenter" id="ui-waiting">
             <h3 class="who">Opponent's turn...</h3>
             <div class="gallow"></div>
             <div>
@@ -135,7 +148,7 @@
             <div class="letters"></div>
         </div>
 
-        <div id="ui-playing" style="text-align:center;">
+        <div class="tacenter" id="ui-playing">
             <h3 class="who">Your turn...</h3>
             <div class="gallow"></div>
             <div id="playingGallow" class="gallow2" style="display:inline-block;"></div>

@@ -1,4 +1,4 @@
-var _=require('lodash');
+//var _=require('lodash');
 var machina=require('machina');
 
 var HmanserverFsm=machina.Fsm.extend({
@@ -7,7 +7,6 @@ var HmanserverFsm=machina.Fsm.extend({
     // Machina interface
     , initialize: function(io){
         this._io=io;
-        if(this.DEBUGTRACE)console.log('initialize \n\tthis._io %s', this._io);
         this.handle('start');
     }
     , initialState: "uninitialized"
@@ -97,7 +96,6 @@ var HmanserverFsm=machina.Fsm.extend({
         // Make sure they can play the letter
         if(currPlayer.letters.indexOf(letterPlayed)===-1){
             console.log('Error, letter %s not available to play', letterPlayed);
-            // TODO don't further process if this happens
         }
         
         // Create match list
@@ -137,9 +135,7 @@ var HmanserverFsm=machina.Fsm.extend({
         if(this.DEBUGTRACE)console.log('nextState %s' , nextState);
         
         if(nextState==='win'||nextState==='lose'){
-//            this._io.to(currPlayer.id).emit('gameover', this._gamestate());
             this._winner=(nextState==='win')?this._playerTurn:(this._playerTurn+1)%2;
-            // return 'gameover';
             return 'update';
         }
         
