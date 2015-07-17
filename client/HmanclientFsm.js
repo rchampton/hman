@@ -105,7 +105,7 @@ console.log('TODO process win/lose messages');
         this.handle('matched');
     }
     , send: function(word){
-        this._word=word;
+        this._word=word.toLowerCase();
         this._socket.emit('setup', this._word);
         this.handle('sync');
     }

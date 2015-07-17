@@ -29,7 +29,7 @@ ui.refresh=function(){
             case true:
                 this.writeString(who, 'Your turn!');
                 gallow.className='gallows-'+gamestate.gallowIndex;
-                this.writeString(mask, gamestate.mask);
+                this.writeString(mask, gamestate.mask.toUpperCase());
                 lettersDiv.innerHTML='';
 
                 var divPlaykbd=document.getElementById('playkbd');
@@ -52,9 +52,8 @@ ui.appendLetter=function(targetElemId){
     var divElem=document.getElementById(targetElemId+'div');
     var letterSelected=event.target.getAttribute('letter');
     var targetElem=document.getElementById(targetElemId);
-console.log('targetElem %s, letterSelected %s',targetElem,letterSelected);
+
     if(letterSelected==='Bksp'){
-console.log('1 targetElem.value %s',targetElem.value);
         if(targetElem.value.length>0){
             targetElem.value=targetElem.value.substr(0, targetElem.value.length-1);
         }
@@ -64,8 +63,7 @@ console.log('1 targetElem.value %s',targetElem.value);
         if(targetElemId=='word')
             this.handleSendClick();
     }else{
-        targetElem.value+=letterSelected;
-//        this.appendString(divElem, letterSelected);
+        targetElem.value+=letterSelected.toUpperCase();
     }
     this.writeString(divElem, targetElem.value);
 };
@@ -74,24 +72,16 @@ ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn, doB
     doBkspEnter=doBkspEnter||false;
 
     var NUMLETTERSPERLINE=6;
+    var CHECKMARK='\uef7a', ARROWLEFT='\uee1f';
+    
     var letters='abcdefghijklmnopqrstuvwxyz'.split('');
     var divLetters=document.getElementById(elemId);
-    var newLetter, br;
+    var newLetter, br, span;
 
-/*    if(clickToControlElemId=='pname'){
-        var keyNameClick=function(){
-            var letter=event.target.getAttribute('letter');
-            console.log('event.target %s, letter %s', event.target, letter);
-        };
-
-        divLetters.addEventListener('click', keyNameClick)
-    }*/
-    
     for(var i=0, z=letters.length; i<z; i++){
-        newLetter=document.createElement('div');
-        newLetter.className='letter-'+letters[i];
-        newLetter.style.display='inline-block';
+        newLetter=document.createElement('span');
         newLetter.setAttribute('letter', letters[i]);
+        newLetter.innerHTML=letters[i].toUpperCase();
 
         if(availableLetters==undefined || availableLetters.indexOf(letters[i])>-1){
             // TODO don't like the way this is done, hacky with the whole fn thing
@@ -113,16 +103,20 @@ ui.drawKeyboard=function(elemId, clickToControlElemId, availableLetters, fn, doB
         }
     }
     if(doBkspEnter){
-        newLetter=document.createElement('div');
-        newLetter.className='letter-Bksp';
-        newLetter.style.display='inline-block';
+        span=document.createElement('span');
+        span.innerHTML='&nbsp; '
+        divLetters.appendChild(span);
+
+        newLetter=document.createElement('span');
+        newLetter.style.color='red';
+        newLetter.innerHTML=ARROWLEFT;
         newLetter.setAttribute('letter', 'Bksp');
         newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
         divLetters.appendChild(newLetter);
 
-        newLetter=document.createElement('div');
-        newLetter.className='letter-Enter';
-        newLetter.style.display='inline-block';
+        newLetter=document.createElement('span');
+        newLetter.style.color='green';
+        newLetter.innerHTML=CHECKMARK;
         newLetter.setAttribute('letter', 'Enter');
         newLetter.setAttribute('onclick', 'javascript:ui.appendLetter("'+clickToControlElemId+'");');
         divLetters.appendChild(newLetter);
@@ -162,8 +156,7 @@ ui.writeString=function(container, string, clearFirst){
 }.bind(ui);
 
 ui.appendString=function(container, string){
-    // var container=document.getElementById(containerElemId);
-    var punc={};
+/*    var punc={};
     punc[' ']='Space'
         , punc['!']='Exclamation'
         , punc['-']='Dash'
@@ -186,7 +179,8 @@ ui.appendString=function(container, string){
                 div.className='letter-'+punc['?'];
         }
         container.appendChild(div);
-    }
+    }*/
+    container.innerHTML+=string;
 }.bind(ui);
 
 ui.renderGallow=function(container, state){

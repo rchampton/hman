@@ -146,12 +146,11 @@ var HmanserverFsm=machina.Fsm.extend({
     , play: function(letter){
         var nextMessage='update';
         if(letter){
-            if(this.DEBUGTRACE)console.log('%s played letter %s, updating gamestate...', this._players[this._playerTurn].name, letter);
             nextMessage=this._updateGamestate(letter);
+            if(this.DEBUGTRACE)console.log('%s played letter %s, updating gamestate to %s', this._players[this._playerTurn].name, letter, nextMessage);
         }
 
         // Tell clients to update
-//        this._playerTurn=(this._playerTurn+1)%2;
         if(this.DEBUGTRACE)console.log(this._players[this._playerTurn].name + "'s turn...");
         this._io.emit(nextMessage, this._gamestate());
         if(this._winner>-1)

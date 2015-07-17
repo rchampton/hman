@@ -14,30 +14,47 @@
                 src: url('/client/C64_Pro-STYLE.woff') format('woff');
             }
             .c64{
-                font-family: C64
+                font-family: C64;
             }
         </style>
         <style type="text/css">
+            .letterheight{
+                height:33px;
+            }
+
             .tacenter {
                 text-align: center;
             }
+
             .letter{
                 background-color: #efefef;
                 border: solid 1px black;
                 padding-right: 15px;
                 margin: 15px;
             }
-            .spritekbd{
+
+            .spritekbd {
                 text-align:center;
             }
+
+            .spritekbd span[letter] {
+                display: inline-block;
+                cursor: pointer;
+                font-family: 'C64';
+                margin: 6px;
+            }
+
             .spritekbd div[class^="letter"] {
                 border:solid 1px #efefef;
                 cursor:pointer;
                 margin:6px;
+                padding-bottom: 3px;
             }
+
             .mask {
                 text-align: center;
             }
+
             .boxed {
                 border: solid 1px black;
                 margin: 13px;
@@ -112,33 +129,33 @@
         </script>
     </head>
     <body>
-        <div class="tacenter" id="ui-connecting">
+        <div class="c64 tacenter" id="ui-connecting">
             <button class="c64" onclick="clientFsm.connect()">Connect!</button>
         </div>
 
-        <div class="tacenter" id="ui-matching">
-            <h3 class="c64">Enter your name</h3>
-            <div id="pnamediv"></div>
+        <div class="c64 tacenter" id="ui-matching">
+            <h3>Enter your name</h3>
+            <div class="letterheight" id="pnamediv"></div>
             <input id="pname" />
             <hr>
             <div class="spritekbd" id="spritekbd"></div>
-            <button onclick="login()">Login</button>
+<!--            <button onclick="login()">Login</button>-->
         </div>
 
-        <div class="tacenter" id="ui-setup">
-            <h3 class="c64">Choose your word</h3>
-            <div id="worddiv"></div>
+        <div class="c64 tacenter" id="ui-setup">
+            <h3>Choose your word</h3>
+            <div class="letterheight" id="worddiv"></div>
             <input id="word"/>
             <hr>
             <div class="spritekbd" id="spritekbd2"></div>
-            <button onclick="send()">Go!</button>
+<!--            <button onclick="send()">Go!</button>-->
         </div>
 
-        <div class="tacenter" id="ui-syncing">
-            <h3 class="c64">Waiting to start...</h3>
+        <div class="c64 tacenter" id="ui-syncing">
+            <h3>Waiting to start...</h3>
         </div>
 
-        <div class="tacenter" id="ui-waiting">
+        <div class="c64 tacenter" id="ui-waiting">
             <h3 class="who">Opponent's turn...</h3>
             <div class="gallow"></div>
             <div>
@@ -148,7 +165,7 @@
             <div class="letters"></div>
         </div>
 
-        <div class="tacenter" id="ui-playing">
+        <div class="c64 tacenter" id="ui-playing">
             <h3 class="who">Your turn...</h3>
             <div class="gallow"></div>
             <div id="playingGallow" class="gallow2" style="display:inline-block;"></div>
@@ -158,17 +175,17 @@
             <div id="playkbd" class="spritekbd"></div>
         </div>
 
-        <div id="ui-won">
+        <div class="c64" id="ui-won">
             <h3>You won!  :)</h3>
             <a href="#" onclick="document.location.reload();">Play again</a>
         </div>
 
-        <div id="ui-lost">
+        <div class="c64" id="ui-lost">
             <h3>You lost.  :(</h3>
             <a href="#" onclick="document.location.reload();">Play again</a>
         </div>
 
-        <div id="ui-done">
+        <div class="c64" id="ui-done">
             <h3>Done</h3>
             <a href="window.refresh();">Play again</a>
         </div>
