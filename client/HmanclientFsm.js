@@ -14,23 +14,7 @@ var HmanclientFsm=machina.Fsm.extend({
         , syncing: {
             _onEnter: function(){
                 if(this.DEBUGTRACE)console.log('Client syncing...');
-                this._socket.on('update', function(gamestate){
-                    this._gamestate=gamestate;
-                    var playerTurn=gamestate.playerTurn;
-                    if(this.DEBUGTRACE){
-                        console.log('Received update message with gamestate:');
-                        console.dir(gamestate);
-                        console.log('this._playerIndex %s, playerTurn %s', this._playerIndex, playerTurn);
-                    }
-                    if(gamestate.winner>-1){
-console.log('TODO process win/lose messages');
-                        this.handle((gamestate.winner===this._playerIndex)?'win':'lose');
-                    }else{
-                        if(this._playerIndex==playerTurn)this.handle('play');
-                        else this.handle('wait');
-                    }
-
-                }.bind(this));
+                this._socket.on('update', function(gamestate){this._updateClient(gamestate);}.bind(this) );
             }
             , play: 'playing'
             , wait: 'waiting'
@@ -39,12 +23,57 @@ console.log('TODO process win/lose messages');
             _onEnter: function(){}
             , wait: 'waiting'
             , play: 'playing'
+            , showright: 'right'
+            , showwrong: 'wrong'
             , win: 'won'
             , lose: 'lost'
         }
         , playing: {
             _onEnter: function(){
                 if(this.DEBUGTRACE)console.log('Updating ui...');
+            }
+            , play: 'playing'
+            , wait: 'waiting'
+            , showright: 'right'
+            , showwrong: 'wrong'
+            , win: 'won'
+            , lose: 'lost'
+        }
+        , wrong: {
+            _onEnter: function(){
+                // Display wrong message, delay, then transfer to waiting
+                setTimeout(function(){
+                    this.transition('continue');
+                }.bind(this), this._RESULTDELAYMS);
+            }
+        }
+        , right: {
+            _onEnter: function(){
+                // Delay right message, delay, then transfer to playing
+                setTimeout(function(){
+                    this.transition('continue');
+                }.bind(this), this._RESULTDELAYMS);
+            }
+        }
+        , continue: {
+            _onEnter: function(){
+                var playerTurn=this._gamestate.playerTurn;
+                if(this.DEBUGTRACE){
+                    console.dir(this._gamestate);
+                }
+                // if(['playing','waiting'].indexOf(this.state)>-1){
+                    if(this._gamestate.winner>-1){
+console.log('TODO process win/lose messages');
+                        this.handle((this._gamestate.winner===this._playerIndex)?'win':'lose');
+                    }else{
+                        if(this._playerIndex==playerTurn)this.handle('play');
+                        else this.handle('wait');
+                    }
+                // }else{
+                //     console.log('Interstitial... %s', this.state);
+                //     if(this._playerIndex==playerTurn)this.handle('play');
+                //     else this.handle('wait');
+                // }
             }
             , play: 'playing'
             , wait: 'waiting'
@@ -60,19 +89,10 @@ console.log('TODO process win/lose messages');
         , done: {
             onEnter: function(){}
         }
-        , wrong: {
-            _onEnter: function(){
-                // Display wrong message, delay, then transfer to waiting
-            }
-        }
-        , right: {
-            _onEnter: function(){
-                // Delay right message, delay, then transfer to playing
-            }
-        }
     }
 
     // Private members
+    , _RESULTDELAYMS: 2500
     , _socket: undefined
     , _playerName: undefined
     , _playerIndex: undefined
@@ -85,6 +105,22 @@ console.log('TODO process win/lose messages');
     , _masks: []
 
     // Private methods
+    , _updateClient: function(gamestate){
+console.log('_updateClient with %s', gamestate);
+        this._gamestate=gamestate;
+        if(this.DEBUGTRACE)console.dir(this._gamestate);
+        if(this._gamestate.guessCorrect!=null){
+            if(this._gamestate.guessCorrect){
+console.log('handle showright');
+                this.handle('showright');
+            }else{
+console.log('handle showwrong');
+                this.handle('showwrong');
+            }
+        }else{
+            this.transition('continue');
+        }
+    }
     , _logPlayerIndex: function (pIndex){
         this._playerIndex=pIndex;
         if(this.DEBUGTRACE)console.log('Set this._playerIndex ' + this._playerIndex);

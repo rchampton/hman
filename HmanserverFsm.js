@@ -73,13 +73,15 @@ var HmanserverFsm=machina.Fsm.extend({
     , _playerTurn: 0
     , _STATES: ['The Gallows', 'Noose', 'Head', 'Body', 'Left arm', 'Right arm', 'Left leg', 'Right leg']
     , _winner: -1
+    , _guessCorrect: null
 
     // Private methods
     , _gamestate: function(){
         var currPlayer=this._players[this._playerTurn];
-        
+
         return {
-            playerTurn: this._playerTurn
+            guessCorrect: this._guessCorrect
+            , playerTurn: this._playerTurn
             , playerName: currPlayer.name
             , letters: currPlayer.letters
             , mask: currPlayer.mask
@@ -107,6 +109,8 @@ var HmanserverFsm=machina.Fsm.extend({
 
         // Matched at least one _letterPlayed
         if(allIndexes.length>0){
+            this._guessCorrect=true;
+
             for(var i=0, max=allIndexes.length; i<max; i++){
                 currPlayer.mask=currPlayer.mask.substr(0, allIndexes[i])
                     + letterPlayed
@@ -116,6 +120,8 @@ var HmanserverFsm=machina.Fsm.extend({
             if(currPlayer.word===currPlayer.mask)nextState='win';
         // No match
         }else{
+            this._guessCorrect=false;
+
             if(this.DEBUGTRACE)console.log('Incrementing %s\'s gallowIndex from %s', currPlayer.name, currPlayer.gallowIndex);
             currPlayer.gallowIndex+=1;
             if(currPlayer.gallowIndex===this._STATES.length){
@@ -147,12 +153,15 @@ var HmanserverFsm=machina.Fsm.extend({
         var nextMessage='update';
         if(letter){
             nextMessage=this._updateGamestate(letter);
-            if(this.DEBUGTRACE)console.log('%s played letter %s, updating gamestate to %s', this._players[this._playerTurn].name, letter, nextMessage);
+            if(this.DEBUGTRACE)console.log('%s played letter %s', this._players[this._playerTurn].name, letter);
         }
 
         // Tell clients to update
-        if(this.DEBUGTRACE)console.log(this._players[this._playerTurn].name + "'s turn...");
+        if(this.DEBUGTRACE){
+            console.log(this._players[this._playerTurn].name + "'s turn, emitting %s", nextMessage);
+        }
         this._io.emit(nextMessage, this._gamestate());
+
         if(this._winner>-1)
             this.handle('gameover');
     }

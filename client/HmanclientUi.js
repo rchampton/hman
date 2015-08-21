@@ -10,6 +10,7 @@ ui.closeAllDivs=function(){
 
 ui.refresh=function(){
     this.closeAllDivs();
+console.log('clientFsm.state: ' + clientFsm.state );
     document.getElementById('ui-'+clientFsm.state).style.display='block';
     var inputs=document.getElementById('ui-'+clientFsm.state).getElementsByTagName('input');
     if(inputs.length)inputs[0].focus();
@@ -24,7 +25,7 @@ ui.refresh=function(){
         , mask=currDiv.getElementsByClassName('mask')[0]
         , lettersDiv=currDiv.getElementsByClassName('letters')[0]
         , playkbd=document.getElementById('playkbd');
-    if(gamestate.winner&&gamestate.winner===-1){
+    if(['playing','waiting'].indexOf(clientFsm.state)>-1&&gamestate.winner&&gamestate.winner===-1){
         switch(clientFsm.isMyTurn()){
             case true:
                 this.writeString(who, 'Your turn!');
