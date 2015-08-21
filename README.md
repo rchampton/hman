@@ -1,0 +1,2 @@
+# hman
+A simple hangman
